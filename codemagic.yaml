@@ -9,9 +9,12 @@ workflows:
         script: flutter pub get
       - name: Create iOS platform files
         script: flutter create . --platforms=ios
-      - name: Install CocoaPods
+      - name: Generate Podfile manually if missing
         script: |
           cd ios
+          if [ ! -f "Podfile" ]; then
+            pod init
+          fi
           pod install
       - name: Build iOS App
         script: flutter build ipa --release --no-codesign
