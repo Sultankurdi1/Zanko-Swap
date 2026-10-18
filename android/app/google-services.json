@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "878815878632",
+    "project_id": "zankoswap-app-2026",
+    "storage_bucket": "zankoswap-app-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878815878632:android:235d9a82a8817ab4bed85d",
+        "android_client_info": {
+          "package_name": "com.zankoswap.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "878815878632-6esnk6heuf196cc8qhva748f3e7835qu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2Dzc31fLxFMBwYLJsK3rUUdRl_F04kuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "878815878632-6esnk6heuf196cc8qhva748f3e7835qu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,36 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+
+// Keep every Android module (including Flutter plugins) on API 36.
+// Some third-party plugins declare an older compileSdk inside their own
+// build.gradle; applying this in afterEvaluate ensures the final Android
+// module configuration is 36 before AAR metadata checks run.
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            try {
+                project.android.compileSdk = 36
+            } catch (Exception ignored) {
+                // Ignore non-Android or incompatible extensions.
+            }
+        }
+    }
+}
+
+
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

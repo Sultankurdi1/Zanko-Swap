@@ -1,0 +1,19 @@
+{
+  "examples": [
+    {
+      "type": "college",
+      "nameKu": "نمونەی کۆلێژ",
+      "nameEn": "Example College",
+      "city": "Erbil",
+      "descriptionKu": "وەسفی کورت",
+      "descriptionEn": "Short description",
+      "websiteUrl": "https://example.com",
+      "instagramUrl": "https://instagram.com/example",
+      "facebookUrl": "https://facebook.com/example",
+      "phone": "",
+      "address": "",
+      "logoUrl": "",
+      "active": true
+    }
+  ]
+}
