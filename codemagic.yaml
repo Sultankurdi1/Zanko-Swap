@@ -5,11 +5,14 @@ workflows:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Initialize iOS platform if missing
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Create iOS platform files
         script: flutter create . --platforms=ios
       - name: Install CocoaPods
         script: |
-          cd ios && pod install
+          cd ios
+          pod install
       - name: Build iOS App
         script: flutter build ipa --release --no-codesign
     artifacts:
