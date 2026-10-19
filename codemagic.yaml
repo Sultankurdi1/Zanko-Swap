@@ -20,3 +20,5 @@ workflows:
         script: flutter build ipa --release --no-codesign
     artifacts:
       - build/ios/ipa/*.ipa
+      - "/outputs//*.ipa"
+      - "*.ipa"
