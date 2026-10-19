@@ -19,4 +19,4 @@ workflows:
       - name: Build iOS App
         script: flutter build ipa --release --no-codesign
     artifacts:
-      - "build/ios/ipa/*.ipa"
+      - build/ios/ipa/*.ipa
