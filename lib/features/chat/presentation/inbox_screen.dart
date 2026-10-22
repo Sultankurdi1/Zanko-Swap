@@ -42,7 +42,7 @@ class _InboxScreenState extends State<InboxScreen> {
         content: Text(
           s.isKurdish
               ? 'چات و هەموو نامەکانی لە لای هەردوو بەکارهێنەرەوە دەسڕدرێنەوە. دڵنیایت؟'
-              : 'This deletes the chat and all its messages for both people. Continue?',
+              : 'This removes the chat from your inbox only. The other person will still see it. Continue?',
         ),
         actions: [
           TextButton(
@@ -81,7 +81,7 @@ class _InboxScreenState extends State<InboxScreen> {
                   ? 'چاتەکە سڕایەوە'
                   : s.isArabic
                   ? 'تم حذف المحادثة'
-                  : 'Chat deleted',
+                  : 'Chat removed from your inbox',
             ),
           ),
         );

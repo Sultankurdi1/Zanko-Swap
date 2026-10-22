@@ -42,8 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final me = Supabase.instance.client.auth.currentUser?.id;
     if (me == null || widget.otherUserId.isEmpty) return '';
     final u = [me, widget.otherUserId]..sort();
-    final lId = widget.listingId?.toString().trim() ?? '';
-    return lId.isNotEmpty ? '${u[0]}_${u[1]}_$lId' : '${u[0]}_${u[1]}';
+    return '${u[0]}_${u[1]}';
   }
 
   @override
@@ -368,13 +367,21 @@ class _ChatScreenState extends State<ChatScreen> {
           .eq('id', chatId)
           .maybeSingle();
 
-      final existingItemCard = await db
+      final existingItemCards = await db
           .from('messages')
-          .select('id')
+          .select('text')
           .eq('chatId', chatId)
           .eq('type', 'item_card')
-          .limit(1);
-      final hasItemCard = existingItemCard.isNotEmpty;
+          .limit(100);
+      final listingId = widget.listingId?.toString().trim() ?? '';
+      final hasItemCard = existingItemCards.any((row) {
+        try {
+          final card = jsonDecode(row['text']?.toString() ?? '');
+          return card is Map && card['listingId']?.toString() == listingId;
+        } catch (_) {
+          return false;
+        }
+      });
 
       if (existingChat == null) {
         final chatData = <String, dynamic>{
@@ -399,12 +406,15 @@ class _ChatScreenState extends State<ChatScreen> {
               'isRead': false,
               'lastMessageAt': now,
               'updatedAt': now,
+              'hiddenForBuyer': false,
+              'hiddenForSeller': false,
             })
             .eq('id', chatId);
       }
       if (!hasItemCard &&
           (widget.listingTitle.isNotEmpty || widget.listingImage.isNotEmpty)) {
         final cardData = jsonEncode({
+          'listingId': listingId,
           'title': widget.listingTitle,
           'price': widget.listingPrice,
           'image': widget.listingImage,

@@ -9,8 +9,9 @@ class ChatRepository {
 
   String generateChatId(String otherUserId, {int? listingId}) {
     final ids = [myId, otherUserId]..sort();
-    final base = '${ids[0]}_${ids[1]}';
-    return listingId == null ? base : '${base}_$listingId';
+    // A conversation belongs to the two participants, regardless of which
+    // listing they are discussing.
+    return '${ids[0]}_${ids[1]}';
   }
 
   Future<Chat?> getOrCreateChat({
@@ -106,6 +107,8 @@ class ChatRepository {
             'lastSenderId': myId,
             'isRead': false,
             'updatedAt': now,
+            'hiddenForBuyer': false,
+            'hiddenForSeller': false,
             if (listingId != null) 'listingId': listingId,
           })
           .eq('id', chatId);
@@ -133,7 +136,11 @@ class ChatRepository {
         .order('updatedAt', ascending: false)
         .map((rows) {
           return rows
-              .where((r) => r['buyerId'] == myId || r['sellerId'] == myId)
+              .where((r) {
+                if (r['buyerId'] == myId) return r['hiddenForBuyer'] != true;
+                if (r['sellerId'] == myId) return r['hiddenForSeller'] != true;
+                return false;
+              })
               .map((r) => Chat.fromMap(r))
               .toList();
         });
@@ -143,7 +150,24 @@ class ChatRepository {
     if (myId.isEmpty || chatId.isEmpty) {
       throw StateError('You must be signed in to delete a conversation.');
     }
-    await _client.from('chats').delete().eq('id', chatId);
+    final chat = await _client
+        .from('chats')
+        .select('buyerId,sellerId')
+        .eq('id', chatId)
+        .maybeSingle();
+    if (chat == null) return;
+    final hiddenColumn = chat['buyerId'] == myId
+        ? 'hiddenForBuyer'
+        : chat['sellerId'] == myId
+        ? 'hiddenForSeller'
+        : null;
+    if (hiddenColumn == null) {
+      throw StateError('You are not a participant in this conversation.');
+    }
+    await _client
+        .from('chats')
+        .update({hiddenColumn: true})
+        .eq('id', chatId);
   }
 
   Future<void> markAsRead(String otherUserId, {int? listingId}) async {
