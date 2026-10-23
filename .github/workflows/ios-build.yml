@@ -34,18 +34,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Cache CocoaPods specs
-        uses: actions/cache@v4
-        with:
-          path: ~/.cocoapods/repos
-          key: cocoapods-specs-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: cocoapods-specs-
+      - name: Disable Swift Package Manager
+        run: flutter config --no-enable-swift-package-manager
 
-      - name: Install CocoaPods
-        run: |
-          cd ios
-          pod install
-          cd ..
+      - name: Build iOS App Frameworks (Generates Podfile & workspace)
+        run: flutter build ios --config-only
 
       - name: Patch Xcode project for unsigned build
         run: |
@@ -65,9 +58,6 @@ jobs:
             puts 'Patched Runner.xcodeproj with dummy Development Team and disabled code signing.'
           "
 
-      - name: Disable Swift Package Manager
-        run: flutter config --no-enable-swift-package-manager
-
       - name: Build iOS App (unsigned)
         env:
           FLUTTER_DISABLE_SWIFT_PACKAGE_MANAGER: true
@@ -78,7 +68,6 @@ jobs:
         run: |
           mkdir -p build/ios/ipa/Payload
           
-          # Find Runner.app dynamically
           APP_PATH=$(find build/ios -type d -name "Runner.app" | head -n 1)
           
           if [ -n "$APP_PATH" ]; then
