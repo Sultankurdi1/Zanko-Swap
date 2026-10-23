@@ -37,10 +37,7 @@ jobs:
       - name: Disable Swift Package Manager
         run: flutter config --no-enable-swift-package-manager
 
-      - name: Build iOS App Frameworks (Generates Podfile & workspace)
-        run: flutter build ios --config-only
-
-      - name: Patch Xcode project for unsigned build
+      - name: Patch Xcode project for unsigned build (Before any build)
         run: |
           ruby -e "
             require 'xcodeproj'
@@ -55,7 +52,7 @@ jobs:
               end
             end
             project.save
-            puts 'Patched Runner.xcodeproj with dummy Development Team and disabled code signing.'
+            puts 'Patched Runner.xcodeproj successfully before build.'
           "
 
       - name: Build iOS App (unsigned)
