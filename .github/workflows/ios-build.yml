@@ -1,0 +1,83 @@
+name: iOS Build (unsigned .ipa)
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "lib/**"
+      - "ios/**"
+      - "pubspec.yaml"
+      - ".github/workflows/ios-build.yml"
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch: {}
+
+concurrency:
+  group: ios-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            flutter
+            ~/.pub-cache
+          key: flutter-stable-macos-${{ runner.os }}
+
+      - name: Install Flutter
+        run: |
+          if [ ! -d "flutter" ]; then
+            git clone https://github.com/flutter/flutter.git --branch stable --depth 1
+          fi
+          echo "$PWD/flutter/bin" >> "$GITHUB_PATH"
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Get dependencies
+        run: flutter pub get
+
+     
+      - name: Run unit tests
+        run: |
+          if ls test/*_test.dart 1> /dev/null 2>&1; then
+            flutter test
+          else
+            echo "No tests found, skipping."
+          fi
+
+      - name: Build unsigned .ipa
+        run: flutter build ipa --release --no-codesign
+
+      - name: Rename artifact with version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d '+' -f 1)
+          BUILD=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -s -d '+' -f 2)
+          FILE=$(ls build/ios/ipa/*.ipa)
+          cp "$FILE" "build/ios/ipa/ZankoSwap-v${VERSION}+${BUILD}-unsigned.ipa"
+
+      - name: Upload .ipa artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zankoswap-ios-ipa
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: error
+          retention-days: 14
+
+     
+      - name: Release on tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/ios/ipa/*.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
