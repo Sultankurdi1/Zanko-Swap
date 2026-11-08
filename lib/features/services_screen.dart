@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../core/data/auth_permissions.dart';
 import '../core/data/external_links.dart';
 import '../core/data/supabase_storage_service.dart';
@@ -650,9 +649,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
                                 ? 'القائمة'
                                 : 'Menu',
                             onTap: () async {
-                              final ok = await launchUrl(
-                                Uri.parse(menuUrl),
-                                mode: LaunchMode.externalApplication,
+                              final ok = await ExternalLinks.openWebUrl(
+                                menuUrl,
                               );
                               if (!ok && context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(

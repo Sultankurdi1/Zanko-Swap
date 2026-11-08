@@ -31,6 +31,38 @@ class SupabaseStorageService {
     return client.storage.from('listing-images').getPublicUrl(path);
   }
 
+  static const receiptBucket = 'ad-receipts';
+
+  static Future<String> uploadReceipt({
+    required String ownerId,
+    required File file,
+  }) async {
+    final path =
+        '$ownerId/receipt_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    await client.storage
+        .from(receiptBucket)
+        .upload(
+          path,
+          file,
+          fileOptions: const FileOptions(contentType: 'image/jpeg'),
+        );
+    return '$receiptBucket/$path';
+  }
+
+  static Future<String?> receiptViewUrl(String stored) async {
+    if (stored.startsWith('http://') || stored.startsWith('https://')) {
+      return stored;
+    }
+    if (!stored.startsWith('$receiptBucket/')) return null;
+    try {
+      return await client.storage
+          .from(receiptBucket)
+          .createSignedUrl(stored.substring(receiptBucket.length + 1), 600);
+    } catch (_) {
+      return null;
+    }
+  }
+
   static Future<String> uploadProfileImage({
     required String userId,
     required File file,

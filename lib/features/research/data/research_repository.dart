@@ -23,7 +23,20 @@ class ResearchRepository {
     }
   }
 
-  Stream<List<ResearchPaper>> stream({String? departmentId, String? stage}) {
+  final _streams = <String, Stream<List<ResearchPaper>>>{};
+
+  void resetStreams() => _streams.clear();
+
+  Stream<List<ResearchPaper>> stream({String? departmentId, String? stage}) =>
+      _streams.putIfAbsent(
+        '$departmentId|$stage',
+        () => _openStream(departmentId: departmentId, stage: stage),
+      );
+
+  Stream<List<ResearchPaper>> _openStream({
+    String? departmentId,
+    String? stage,
+  }) {
     var query = db.from('research').stream(primaryKey: ['id']);
     final department = departmentId?.trim();
     if (department != null && department.isNotEmpty) {

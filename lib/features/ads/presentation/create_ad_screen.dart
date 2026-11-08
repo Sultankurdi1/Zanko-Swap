@@ -211,12 +211,10 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
 
       String receiptResult = receiptCode.text.trim();
       if (_receiptImageFile != null) {
-        final receiptUrl = await SupabaseStorageService.uploadListingImage(
+        receiptResult = await SupabaseStorageService.uploadReceipt(
           ownerId: myId,
           file: _receiptImageFile!,
-          fileName: 'receipt_${DateTime.now().millisecondsSinceEpoch}.jpg',
         );
-        receiptResult = receiptUrl;
       }
 
       final formattedUrl =

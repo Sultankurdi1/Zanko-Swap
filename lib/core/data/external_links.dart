@@ -10,6 +10,23 @@ class ExternalLinks {
     return launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
+  static Future<bool> openWebUrl(String raw) async {
+    var value = raw.trim();
+    if (value.isEmpty) return false;
+    if (!value.contains('://')) value = 'https://$value';
+    final uri = Uri.tryParse(value);
+    if (uri == null ||
+        !(uri.scheme == 'https' || uri.scheme == 'http') ||
+        uri.host.isEmpty) {
+      return false;
+    }
+    try {
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      return false;
+    }
+  }
+
   static Future<bool> openMaps({
     String? address,
     double? latitude,

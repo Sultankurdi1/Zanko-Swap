@@ -1,8 +1,7 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../core/data/auth_permissions.dart';
 import '../core/data/external_links.dart';
 import '../core/data/supabase_storage_service.dart';
@@ -250,10 +249,22 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
         ? Icons.restaurant_rounded
         : Icons.local_cafe_rounded;
     final typeLabel = type == 'copy'
-        ? (s.isKurdish ? 'پەراوگە / فۆتۆکۆپی' : s.isArabic ? 'قرطاسية ونسخ' : 'Copy / Print')
+        ? (s.isKurdish
+              ? 'پەراوگە / فۆتۆکۆپی'
+              : s.isArabic
+              ? 'قرطاسية ونسخ'
+              : 'Copy / Print')
         : type == 'restaurant'
-        ? (s.isKurdish ? 'چێشتخانە' : s.isArabic ? 'مطعم' : 'Restaurant')
-        : (s.isKurdish ? 'کافێ' : s.isArabic ? 'مقهى' : 'Cafe');
+        ? (s.isKurdish
+              ? 'چێشتخانە'
+              : s.isArabic
+              ? 'مطعم'
+              : 'Restaurant')
+        : (s.isKurdish
+              ? 'کافێ'
+              : s.isArabic
+              ? 'مقهى'
+              : 'Cafe');
     return Scaffold(
       backgroundColor: palette.bg,
       appBar: AppBar(
@@ -302,12 +313,20 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => ColoredBox(
                             color: palette.surfaceHighlight,
-                            child: Icon(typeIcon, size: 72, color: palette.textSecondary),
+                            child: Icon(
+                              typeIcon,
+                              size: 72,
+                              color: palette.textSecondary,
+                            ),
                           ),
                         )
                       : ColoredBox(
                           color: palette.surfaceHighlight,
-                          child: Icon(typeIcon, size: 72, color: palette.textSecondary),
+                          child: Icon(
+                            typeIcon,
+                            size: 72,
+                            color: palette.textSecondary,
+                          ),
                         ),
                 ),
               ),
@@ -315,7 +334,10 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
                 bottom: 10,
                 left: 10,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: palette.bg.withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(20),
@@ -342,12 +364,20 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
           const SizedBox(height: 14),
           Text(
             '${service['name'] ?? ''}',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: palette.textPrimary),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              color: palette.textPrimary,
+            ),
           ),
           const SizedBox(height: 4),
           Row(
             children: [
-              Icon(Icons.location_on_outlined, size: 15, color: palette.textSecondary),
+              Icon(
+                Icons.location_on_outlined,
+                size: 15,
+                color: palette.textSecondary,
+              ),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -384,10 +414,7 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
                   onPressed: () async {
                     final messenger = ScaffoldMessenger.of(context);
                     final errorMsg = AppStrings.of(context).couldNotOpenLink;
-                    final ok = await launchUrl(
-                      Uri.parse(menu),
-                      mode: LaunchMode.externalApplication,
-                    );
+                    final ok = await ExternalLinks.openWebUrl(menu);
                     if (!ok && mounted) {
                       messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
                     }
@@ -411,11 +438,17 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
               decoration: BoxDecoration(
                 color: palette.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: palette.primary.withValues(alpha: 0.3)),
+                border: Border.all(
+                  color: palette.primary.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.local_offer_rounded, size: 16, color: palette.accent),
+                  Icon(
+                    Icons.local_offer_rounded,
+                    size: 16,
+                    color: palette.accent,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -444,13 +477,18 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
           const SizedBox(height: 22),
           Row(
             children: [
-              Icon(Icons.grid_view_rounded, size: 18, color: Theme.of(context).colorScheme.primary),
+              Icon(
+                Icons.grid_view_rounded,
+                size: 18,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               const SizedBox(width: 6),
               Text(
-                s.isKurdish
-                    ? 'بابەتەکان و نوێکردنەوەکان'
-                    : 'Items and updates',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                s.isKurdish ? 'بابەتەکان و نوێکردنەوەکان' : 'Items and updates',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ],
           ),
@@ -507,7 +545,9 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
                   final imgUrl = '${r['imageUrl'] ?? ''}';
                   return Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
@@ -516,13 +556,18 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
                         Expanded(
                           flex: 5,
                           child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(16),
+                            ),
                             child: imgUrl.isNotEmpty
                                 ? Image.network(
                                     imgUrl,
                                     fit: BoxFit.cover,
                                     errorBuilder: (_, __, ___) => const Center(
-                                      child: Icon(Icons.image_outlined, size: 32),
+                                      child: Icon(
+                                        Icons.image_outlined,
+                                        size: 32,
+                                      ),
                                     ),
                                   )
                                 : const Center(
@@ -539,7 +584,10 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
                                 '${r['title'] ?? ''}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 13,
+                                ),
                               ),
                               if ('${r['body'] ?? ''}'.trim().isNotEmpty)
                                 Padding(

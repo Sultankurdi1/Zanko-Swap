@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/models/listing.dart';
 import '../../../core/data/favorites_store.dart';
+import '../../../core/data/external_links.dart';
 import '../../../core/data/kurdistan_institutions.dart';
 import '../../listings/data/listing_repository.dart';
 import '../../listings/presentation/item_details_screen.dart';
@@ -109,16 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _launchUrlStr(String? urlStr) async {
-    if (urlStr == null || urlStr.trim().isEmpty) return;
-    final clean = urlStr.trim();
-    final uri = Uri.tryParse(
-      clean.startsWith('http') ? clean : 'https://$clean',
-    );
-    if (uri != null) {
-      try {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } catch (_) {}
-    }
+    if (urlStr == null) return;
+    await ExternalLinks.openWebUrl(urlStr);
   }
 
   Future<List<Map<String, dynamic>>> _fetchAds() async {

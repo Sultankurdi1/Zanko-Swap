@@ -200,7 +200,7 @@ class _ResearchListScreenState extends State<ResearchListScreen> {
                   return _ErrorRetry(
                     palette: palette,
                     message: '${snapshot.error}',
-                    onRetry: () => setState(() {}),
+                    onRetry: () => setState(repo.resetStreams),
                   );
                 }
                 final items = (snapshot.data ?? const <ResearchPaper>[]).where((

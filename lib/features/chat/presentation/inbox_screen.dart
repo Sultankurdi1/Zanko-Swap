@@ -14,6 +14,7 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreenState extends State<InboxScreen> {
   final _repo = ChatRepository();
+  late final Stream<List<Chat>> _chatsStream = _repo.streamMyChats();
   String? _profileIdsKey;
   Future<Map<String, Map<String, String?>>>? _profilesFuture;
 
@@ -149,7 +150,7 @@ class _InboxScreenState extends State<InboxScreen> {
         ),
       ),
       body: StreamBuilder<List<Chat>>(
-        stream: _repo.streamMyChats(),
+        stream: _chatsStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting &&
               !snapshot.hasData) {

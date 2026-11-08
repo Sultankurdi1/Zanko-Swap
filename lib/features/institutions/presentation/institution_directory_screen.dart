@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../core/data/external_links.dart';
 import '../../../core/data/institution_repository.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/institution.dart';
@@ -36,8 +36,12 @@ class _InstitutionDirectoryScreenState extends State<InstitutionDirectoryScreen>
     super.dispose();
   }
 
-  Stream<List<Institution>> stream(int i) =>
-      repo.streamByType(InstitutionType.values[i]);
+  late final List<Stream<List<Institution>>> _streams = List.generate(
+    InstitutionType.values.length,
+    (i) => repo.streamByType(InstitutionType.values[i]),
+  );
+
+  Stream<List<Institution>> stream(int i) => _streams[i];
 
   @override
   Widget build(BuildContext context) {
@@ -219,8 +223,7 @@ class _InstitutionCard extends StatelessWidget {
   const _InstitutionCard({required this.item, required this.palette});
 
   Future<void> _open(String value) async {
-    final uri = Uri.tryParse(value);
-    if (uri != null) await launchUrl(uri, mode: LaunchMode.externalApplication);
+    await ExternalLinks.openWebUrl(value);
   }
 
   @override

@@ -23,7 +23,20 @@ class ExamRepository {
     }
   }
 
+  final _streams = <String, Stream<List<ExamPaper>>>{};
+
+  void resetStreams() => _streams.clear();
+
   Stream<List<ExamPaper>> stream({
+    String? track,
+    String? year,
+    String? subject,
+  }) => _streams.putIfAbsent(
+    '$track|$year|$subject',
+    () => _openStream(track: track, year: year, subject: subject),
+  );
+
+  Stream<List<ExamPaper>> _openStream({
     String? track,
     String? year,
     String? subject,

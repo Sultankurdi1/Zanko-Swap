@@ -162,10 +162,7 @@ class ChatRepository {
     if (hiddenColumn == null) {
       throw StateError('You are not a participant in this conversation.');
     }
-    await _client
-        .from('chats')
-        .update({hiddenColumn: true})
-        .eq('id', chatId);
+    await _client.from('chats').update({hiddenColumn: true}).eq('id', chatId);
   }
 
   Future<void> markAsRead(String otherUserId, {int? listingId}) async {

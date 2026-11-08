@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/models/ad_campaign.dart';
+import '../../../core/data/supabase_storage_service.dart';
 
 class AdminAdsDashboardScreen extends StatefulWidget {
   const AdminAdsDashboardScreen({super.key});
@@ -226,7 +227,9 @@ class _AdminAdsDashboardScreenState extends State<AdminAdsDashboardScreen> {
     );
   }
 
-  void _showReceiptDialog(AdCampaign ad) {
+  Future<void> _showReceiptDialog(AdCampaign ad) async {
+    final imageUrl = await SupabaseStorageService.receiptViewUrl(ad.receiptUrl);
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -241,15 +244,14 @@ class _AdminAdsDashboardScreenState extends State<AdminAdsDashboardScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'زانیاری پسوولە / بەستەر:\n${ad.receiptUrl.isEmpty ? 'هیچ پسوولەیەک دانەنراوە' : ad.receiptUrl}',
+              'زانیاری پسوولە / بەستەر:\n${ad.receiptUrl.isEmpty ? 'هیچ پسوولەیەک دانەنراوە' : (imageUrl != null ? 'وێنەی پسوولە' : ad.receiptUrl)}',
             ),
-            if (ad.receiptUrl.startsWith('http://') ||
-                ad.receiptUrl.startsWith('https://')) ...[
+            if (imageUrl != null) ...[
               const SizedBox(height: 12),
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                  ad.receiptUrl,
+                  imageUrl,
                   height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,

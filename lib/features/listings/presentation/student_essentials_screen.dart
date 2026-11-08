@@ -15,6 +15,8 @@ class StudentEssentialsScreen extends StatefulWidget {
 
 class _StudentEssentialsScreenState extends State<StudentEssentialsScreen> {
   final repository = ListingRepository();
+  late final Stream<List<Listing>> _listingsStream = repository
+      .streamListings();
   final searchController = TextEditingController();
   String search = '';
 
@@ -117,7 +119,7 @@ class _StudentEssentialsScreenState extends State<StudentEssentialsScreen> {
 
           Expanded(
             child: StreamBuilder<List<Listing>>(
-              stream: repository.streamListings(),
+              stream: _listingsStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
