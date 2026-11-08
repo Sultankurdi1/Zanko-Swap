@@ -13,11 +13,7 @@ class AuthPermissions {
 
   bool get isAdmin {
     final metadata = currentUser?.appMetadata ?? const <String, dynamic>{};
-    final userMetadata = currentUser?.userMetadata ?? const <String, dynamic>{};
-    return metadata['role'] == 'admin' ||
-        metadata['is_admin'] == true ||
-        userMetadata['role'] == 'admin' ||
-        userMetadata['is_admin'] == true;
+    return metadata['role'] == 'admin' || metadata['is_admin'] == true;
   }
 
   bool canManage(String? ownerId) => owns(ownerId) || isAdmin;

@@ -188,7 +188,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final res = await Supabase.instance.client
           .from('profiles')
-          .select()
+          .select('displayName, photoUrl')
           .eq('id', widget.otherUserId)
           .maybeSingle();
 

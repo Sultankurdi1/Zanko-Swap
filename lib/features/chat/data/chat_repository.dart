@@ -9,8 +9,6 @@ class ChatRepository {
 
   String generateChatId(String otherUserId, {int? listingId}) {
     final ids = [myId, otherUserId]..sort();
-    // A conversation belongs to the two participants, regardless of which
-    // listing they are discussing.
     return '${ids[0]}_${ids[1]}';
   }
 

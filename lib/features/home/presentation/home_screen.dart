@@ -31,6 +31,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final repository = ListingRepository();
+  late final Stream<List<Listing>> _listingsStream = repository
+      .streamListings();
   final searchController = TextEditingController();
   final scrollController = ScrollController();
   final db = Supabase.instance.client;
@@ -710,7 +712,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             StreamBuilder<List<Listing>>(
-              stream: repository.streamListings(),
+              stream: _listingsStream,
               builder: (context, snapshot) {
                 if (snapshot.hasData &&
                     snapshot.data != null &&

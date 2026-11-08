@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/data/custom_institutions.dart';
 import '../../core/data/kurdistan_institutions.dart';
 import '../../core/localization/app_strings.dart';
 import '../../core/models/academic_path.dart';
@@ -24,10 +25,12 @@ class _AcademicPathPickerState extends State<AcademicPathPicker> {
 
   final _collegeCustom = TextEditingController();
   final _deptCustom = TextEditingController();
+  List<EduInstitution> allInstitutions = kurdistanInstitutions;
 
   @override
   void initState() {
     super.initState();
+    _loadInstitutions();
     if (widget.initialValue.institutionId.isNotEmpty) {
       institution = kurdistanInstitutions
           .where((x) => x.id == widget.initialValue.institutionId)
@@ -39,6 +42,155 @@ class _AcademicPathPickerState extends State<AcademicPathPicker> {
         : null;
     _collegeCustom.text = widget.initialValue.collegeName;
     _deptCustom.text = widget.initialValue.departmentName;
+  }
+
+  Future<void> _loadInstitutions() async {
+    final all = await CustomInstitutionsService.getAll();
+    if (!mounted) return;
+    setState(() {
+      allInstitutions = all;
+      final initialId = widget.initialValue.institutionId;
+      if (institution == null && initialId.isNotEmpty) {
+        institution = all
+            .where((x) => x.id == initialId)
+            .cast<EduInstitution?>()
+            .firstOrNull;
+      }
+    });
+  }
+
+  Future<void> _addCustomInstitution() async {
+    final s = AppStrings.of(context);
+    final nameCtrl = TextEditingController();
+    final cityCtrl = TextEditingController();
+    final collegesCtrl = TextEditingController();
+    EduKind kind = EduKind.institute;
+    final saved = await showDialog<EduInstitution>(
+      context: context,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (dialogCtx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          title: Text(
+            s.isKurdish
+                ? 'زیادکردنی پەیمانگا / زانکۆ'
+                : s.isArabic
+                ? 'إضافة معهد / جامعة'
+                : 'Add institute / university',
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameCtrl,
+                  decoration: InputDecoration(
+                    labelText: s.isKurdish ? 'ناوی پەیمانگا / زانکۆ' : 'Name',
+                    hintText: s.isKurdish
+                        ? 'بۆ نموونە: پەیمانگای نیشتمانی'
+                        : null,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: cityCtrl,
+                  decoration: InputDecoration(
+                    labelText: s.isKurdish ? 'شار' : 'City',
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<EduKind>(
+                  initialValue: kind,
+                  decoration: InputDecoration(
+                    labelText: s.isKurdish ? 'جۆر' : 'Type',
+                    border: const OutlineInputBorder(),
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: EduKind.institute,
+                      child: Text(
+                        s.isKurdish
+                            ? 'پەیمانگا'
+                            : s.isArabic
+                            ? 'معهد'
+                            : 'Institute',
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: EduKind.university,
+                      child: Text(
+                        s.isKurdish
+                            ? 'زانکۆ'
+                            : s.isArabic
+                            ? 'جامعة'
+                            : 'University',
+                      ),
+                    ),
+                  ],
+                  onChanged: (v) => setDialogState(() => kind = v ?? kind),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: collegesCtrl,
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    labelText: s.isKurdish
+                        ? 'کۆلێژەکان (بە کۆما جیابکە)'
+                        : 'Colleges (comma separated)',
+                    hintText: s.isKurdish
+                        ? 'نەشتەوانگ، زانست، ئەدەبیات'
+                        : 'IT, Science, Arts',
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx),
+              child: Text(s.cancel),
+            ),
+            FilledButton(
+              onPressed: () async {
+                if (nameCtrl.text.trim().isEmpty) return;
+                final inst = await CustomInstitutionsService.add(
+                  name: nameCtrl.text.trim(),
+                  city: cityCtrl.text.trim().isEmpty
+                      ? '-'
+                      : cityCtrl.text.trim(),
+                  ownership: EduOwnership.government,
+                  kind: kind,
+                  colleges: collegesCtrl.text
+                      .split(',')
+                      .map((x) => x.trim())
+                      .where((x) => x.isNotEmpty)
+                      .toList(),
+                );
+                if (dialogCtx.mounted) Navigator.pop(dialogCtx, inst);
+              },
+              child: Text(s.add),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (saved != null) {
+      await _loadInstitutions();
+      if (mounted) {
+        setState(() {
+          institution = saved;
+          college = null;
+          department = null;
+          _collegeCustom.clear();
+          _deptCustom.clear();
+        });
+        _emit();
+      }
+    }
   }
 
   @override
@@ -63,10 +215,10 @@ class _AcademicPathPickerState extends State<AcademicPathPicker> {
   @override
   Widget build(BuildContext context) {
     final s = AppStrings.of(context);
-    final govList = kurdistanInstitutions
+    final govList = allInstitutions
         .where((x) => x.ownership == EduOwnership.government)
         .toList();
-    final privList = kurdistanInstitutions
+    final privList = allInstitutions
         .where((x) => x.ownership == EduOwnership.private)
         .toList();
 
@@ -87,6 +239,15 @@ class _AcademicPathPickerState extends State<AcademicPathPicker> {
               decoration: InputDecoration(
                 labelText: s.universityOrInstitute,
                 border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.add_circle_outline_rounded),
+                  tooltip: s.isKurdish
+                      ? 'زیادکردنی پەیمانگا / زانکۆ'
+                      : s.isArabic
+                      ? 'إضافة معهد / جامعة'
+                      : 'Add institute / university',
+                  onPressed: _addCustomInstitution,
+                ),
               ),
               items: [
                 ...govList.map(

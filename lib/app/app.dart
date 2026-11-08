@@ -36,6 +36,21 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
   AppPalette currentPalette = AppPalette.emerald;
   int index = 0;
   bool _showSplash = true;
+  String? _badgeUserId;
+  Stream<List<Map<String, dynamic>>>? _chatsStream;
+  Stream<List<Map<String, dynamic>>>? _messagesStream;
+
+  void _syncBadgeStreams(String? userId) {
+    if (userId == _badgeUserId) return;
+    _badgeUserId = userId;
+    final db = Supabase.instance.client;
+    _chatsStream = userId == null
+        ? null
+        : db.from('chats').stream(primaryKey: ['id']);
+    _messagesStream = userId == null
+        ? null
+        : db.from('messages').stream(primaryKey: ['id']);
+  }
 
   @override
   void initState() {
@@ -104,6 +119,7 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
                   final s = AppStrings.of(context);
                   final palette = AppThemeScope.of(context);
                   final myId = Supabase.instance.client.auth.currentUser?.id;
+                  _syncBadgeStreams(myId);
 
                   final pages = [
                     HomeScreen(
@@ -239,9 +255,7 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
                                   ),
 
                                   StreamBuilder<List<Map<String, dynamic>>>(
-                                    stream: Supabase.instance.client
-                                        .from('chats')
-                                        .stream(primaryKey: ['id']),
+                                    stream: _chatsStream,
                                     builder: (context, chatSnapshot) {
                                       final chatRows = chatSnapshot.data ?? [];
                                       final chatIds = chatRows
@@ -254,9 +268,7 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
                                       return StreamBuilder<
                                         List<Map<String, dynamic>>
                                       >(
-                                        stream: Supabase.instance.client
-                                            .from('messages')
-                                            .stream(primaryKey: ['id']),
+                                        stream: _messagesStream,
                                         builder: (context, messageSnapshot) {
                                           final unreadCount =
                                               (messageSnapshot.data ?? [])

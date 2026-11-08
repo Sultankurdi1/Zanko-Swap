@@ -47,11 +47,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final u = Supabase.instance.client.auth.currentUser;
     if (u == null) return;
     try {
-      final r = await Supabase.instance.client
-          .from('profiles')
-          .select('phone, displayName, photoUrl')
-          .eq('id', u.id)
-          .maybeSingle();
+      final rows = await Supabase.instance.client.rpc('get_my_profile');
+      final r = (rows is List && rows.isNotEmpty)
+          ? Map<String, dynamic>.from(rows.first as Map)
+          : null;
       if (mounted) {
         phone.text = '${r?['phone'] ?? ''}';
         final profileName = r?['displayName']?.toString().trim();

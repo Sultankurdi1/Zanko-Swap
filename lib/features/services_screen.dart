@@ -8,6 +8,7 @@ import '../core/data/external_links.dart';
 import '../core/data/supabase_storage_service.dart';
 import '../core/localization/app_strings.dart';
 import '../core/theme/app_theme.dart';
+import 'service_profile_screen.dart';
 
 class ServicesScreen extends StatefulWidget {
   final String initialCategory;
@@ -18,7 +19,15 @@ class ServicesScreen extends StatefulWidget {
 
 class _ServicesScreenState extends State<ServicesScreen> {
   final db = Supabase.instance.client;
+  late Stream<List<Map<String, dynamic>>> _servicesStream =
+      _openServicesStream();
   final search = TextEditingController();
+
+  Stream<List<Map<String, dynamic>>> _openServicesStream() => db
+      .from('services')
+      .stream(primaryKey: ['id'])
+      .eq('active', true)
+      .order('createdAt', ascending: false);
   late String category;
   String query = '';
   bool get isDedicated => category != 'all';
@@ -360,11 +369,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
 
           Expanded(
             child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: db
-                  .from('services')
-                  .stream(primaryKey: ['id'])
-                  .eq('active', true)
-                  .order('createdAt', ascending: false),
+              stream: _servicesStream,
               builder: (context, snap) {
                 if (snap.connectionState == ConnectionState.waiting) {
                   return _ServiceSkeleton(palette: palette);
@@ -373,7 +378,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   return _ErrorRetry(
                     palette: palette,
                     message: '${snap.error}',
-                    onRetry: () => setState(() {}),
+                    onRetry: () =>
+                        setState(() => _servicesStream = _openServicesStream()),
                   );
                 }
 
@@ -410,7 +416,29 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 90),
                   itemCount: rows.length,
                   itemBuilder: (context, index) =>
-                      _serviceCard(context, rows[index], palette),
+                      FutureBuilder<List<Map<String, dynamic>>>(
+                        future: db
+                            .from('service_updates')
+                            .select('imageUrl')
+                            .eq('serviceId', rows[index]['id'])
+                            .order('createdAt', ascending: false)
+                            .limit(1),
+                        builder: (context, itemSnap) {
+                          String? latestImg;
+                          final items =
+                              itemSnap.data ?? const <Map<String, dynamic>>[];
+                          if (items.isNotEmpty) {
+                            final img = '${items.first['imageUrl'] ?? ''}';
+                            if (img.isNotEmpty) latestImg = img;
+                          }
+                          return _serviceCard(
+                            context,
+                            rows[index],
+                            palette,
+                            latestImg,
+                          );
+                        },
+                      ),
                 );
               },
             ),
@@ -444,9 +472,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
     BuildContext context,
     Map<String, dynamic> row,
     AppPalette palette,
+    String? latestItemImage,
   ) {
     final s = AppStrings.of(context);
-    final imageUrl = '${row['imageUrl'] ?? ''}';
+    final imageUrl = latestItemImage ?? '${row['imageUrl'] ?? ''}';
     final owner = '${row['ownerId'] ?? ''}';
     final permissions = AuthPermissions(client: db);
     final phone = '${row['phone'] ?? ''}'.trim();
@@ -464,180 +493,195 @@ class _ServicesScreenState extends State<ServicesScreen> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: palette.border),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 76,
-              height: 76,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: imageUrl.isNotEmpty
-                    ? Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ServiceProfileScreen(service: row),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 76,
+                height: 76,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: imageUrl.isNotEmpty
+                      ? Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: palette.surfaceHighlight,
+                            child: Icon(
+                              Icons.storefront_rounded,
+                              color: palette.textSecondary,
+                            ),
+                          ),
+                        )
+                      : Container(
                           color: palette.surfaceHighlight,
                           child: Icon(
                             Icons.storefront_rounded,
                             color: palette.textSecondary,
                           ),
                         ),
-                      )
-                    : Container(
-                        color: palette.surfaceHighlight,
-                        child: Icon(
-                          Icons.storefront_rounded,
-                          color: palette.textSecondary,
-                        ),
-                      ),
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${row['name'] ?? ''}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 15.5,
-                      color: palette.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  if (address.isNotEmpty)
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      address,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                      '${row['name'] ?? ''}',
                       style: TextStyle(
-                        color: palette.textSecondary,
-                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 15.5,
+                        color: palette.textPrimary,
                       ),
                     ),
-                  if ('${row['offer'] ?? ''}'.trim().isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        '${row['offer']}',
+                    const SizedBox(height: 3),
+                    if (address.isNotEmpty)
+                      Text(
+                        address,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: palette.accent,
-                          fontWeight: FontWeight.w700,
+                          color: palette.textSecondary,
                           fontSize: 12,
                         ),
                       ),
-                    ),
-                  if (type == 'copy' && copyPrice.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        '${s.isKurdish
-                            ? 'نرخی کۆپی'
-                            : s.isArabic
-                            ? 'سعر النسخ'
-                            : 'Copy price'}: $copyPrice',
-                        style: TextStyle(
-                          color: palette.textSecondary,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [
-                      _action(
-                        palette: palette,
-                        icon: Icons.map_rounded,
-                        label: s.isKurdish
-                            ? 'نەخشە'
-                            : s.isArabic
-                            ? 'الخرائط'
-                            : 'Maps',
-                        onTap: () async {
-                          final ok = await ExternalLinks.openMaps(
-                            address: address,
-                            latitude: lat,
-                            longitude: lng,
-                          );
-                          if (!ok && context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppStrings.of(context).couldNotOpenMaps,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      ),
-                      if (phone.isNotEmpty)
-                        _action(
-                          palette: palette,
-                          icon: Icons.chat_rounded,
-                          label: 'WhatsApp',
-                          color: const Color(0xFF25D366),
-                          onTap: () async {
-                            final ok = await ExternalLinks.openWhatsApp(phone);
-                            if (!ok && context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    AppStrings.of(context).couldNotOpenWhatsApp,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      if (menuUrl.isNotEmpty)
-                        _action(
-                          palette: palette,
-                          icon: Icons.restaurant_menu_rounded,
-                          label: s.isKurdish
-                              ? 'مێنیو'
-                              : s.isArabic
-                              ? 'القائمة'
-                              : 'Menu',
-                          onTap: () async {
-                            final ok = await launchUrl(
-                              Uri.parse(menuUrl),
-                              mode: LaunchMode.externalApplication,
-                            );
-                            if (!ok && context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    AppStrings.of(context).couldNotOpenLink,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      if (permissions.canManage(owner))
-                        IconButton(
-                          tooltip: s.delete,
-                          onPressed: () => _deleteService(row, palette),
-                          icon: const Icon(
-                            Icons.delete_outline_rounded,
-                            color: Color(0xFFF87171),
-                            size: 20,
+                    if ('${row['offer'] ?? ''}'.trim().isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          '${row['offer']}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: palette.accent,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
                           ),
                         ),
-                    ],
-                  ),
-                ],
+                      ),
+                    if (type == 'copy' && copyPrice.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          '${s.isKurdish
+                              ? 'نرخی کۆپی'
+                              : s.isArabic
+                              ? 'سعر النسخ'
+                              : 'Copy price'}: $copyPrice',
+                          style: TextStyle(
+                            color: palette.textSecondary,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        _action(
+                          palette: palette,
+                          icon: Icons.map_rounded,
+                          label: s.isKurdish
+                              ? 'نەخشە'
+                              : s.isArabic
+                              ? 'الخرائط'
+                              : 'Maps',
+                          onTap: () async {
+                            final ok = await ExternalLinks.openMaps(
+                              address: address,
+                              latitude: lat,
+                              longitude: lng,
+                            );
+                            if (!ok && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppStrings.of(context).couldNotOpenMaps,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                        if (phone.isNotEmpty)
+                          _action(
+                            palette: palette,
+                            icon: Icons.chat_rounded,
+                            label: 'WhatsApp',
+                            color: const Color(0xFF25D366),
+                            onTap: () async {
+                              final ok = await ExternalLinks.openWhatsApp(
+                                phone,
+                              );
+                              if (!ok && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      AppStrings.of(
+                                        context,
+                                      ).couldNotOpenWhatsApp,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        if (menuUrl.isNotEmpty)
+                          _action(
+                            palette: palette,
+                            icon: Icons.restaurant_menu_rounded,
+                            label: s.isKurdish
+                                ? 'مێنیو'
+                                : s.isArabic
+                                ? 'القائمة'
+                                : 'Menu',
+                            onTap: () async {
+                              final ok = await launchUrl(
+                                Uri.parse(menuUrl),
+                                mode: LaunchMode.externalApplication,
+                              );
+                              if (!ok && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      AppStrings.of(context).couldNotOpenLink,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        if (permissions.canManage(owner))
+                          IconButton(
+                            tooltip: s.delete,
+                            onPressed: () => _deleteService(row, palette),
+                            icon: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: Color(0xFFF87171),
+                              size: 20,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
