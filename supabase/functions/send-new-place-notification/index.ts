@@ -76,6 +76,25 @@ Deno.serve(async (request) => {
     if (place.ownerId !== authData.user.id) return jsonResponse({ error: 'Forbidden.' }, 403);
     if (place.active !== true) return jsonResponse({ sent: 0, reason: 'Place is inactive.' });
 
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count: recentCount, error: recentError } = await admin
+      .from('place_broadcasts')
+      .select('service_id', { count: 'exact', head: true })
+      .eq('owner_id', authData.user.id)
+      .gte('sent_at', since);
+    if (recentError) throw recentError;
+    if ((recentCount ?? 0) > 0) {
+      return jsonResponse({ sent: 0, reason: 'Only one new-place announcement per day.' }, 429);
+    }
+
+    const { error: claimError } = await admin
+      .from('place_broadcasts')
+      .insert({ service_id: String(place.id), owner_id: authData.user.id });
+    if (claimError) {
+      if (claimError.code === '23505') return jsonResponse({ sent: 0, reason: 'Already announced.' });
+      throw claimError;
+    }
+
     const { data: devices, error: deviceError } = await admin
       .from('user_devices')
       .select('user_id, fcm_token');

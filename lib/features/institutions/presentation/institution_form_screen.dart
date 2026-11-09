@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/data/auth_permissions.dart';
 import '../../../core/data/institution_repository.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/institution.dart';
@@ -98,12 +99,29 @@ class _InstitutionFormScreenState extends State<InstitutionFormScreen> {
       address: address.text.trim(),
     );
     try {
+      final pendingReview =
+          widget.editing == null && !AuthPermissions().isAdmin;
       if (widget.editing == null) {
         await repo.create(item);
       } else {
         await repo.update(item);
       }
-      if (mounted) Navigator.pop(context);
+      if (!mounted) return;
+      if (pendingReview) {
+        final s = AppStrings.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              s.isKurdish
+                  ? 'نێردرا. دوای پەسەندکردن دەردەکەوێت.'
+                  : s.isArabic
+                  ? 'تم الإرسال. سيظهر بعد الموافقة.'
+                  : 'Submitted. It will appear after review.',
+            ),
+          ),
+        );
+      }
+      Navigator.pop(context);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(

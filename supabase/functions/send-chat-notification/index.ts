@@ -96,6 +96,14 @@ Deno.serve(async (request) => {
       : null;
     if (!recipientId) return jsonResponse({ error: 'Caller is not a conversation participant.' }, 403);
 
+    const { error: claimError } = await admin
+      .from('chat_notifications_sent')
+      .insert({ message_id: message.id.toString() });
+    if (claimError) {
+      if (claimError.code === '23505') return jsonResponse({ sent: 0, reason: 'Already notified.' });
+      throw claimError;
+    }
+
     const { data: devices, error: deviceError } = await admin
       .from('user_devices')
       .select('fcm_token')

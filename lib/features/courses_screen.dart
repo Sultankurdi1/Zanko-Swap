@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../core/data/external_links.dart';
 import '../core/localization/app_strings.dart';
 import '../core/models/ad_campaign.dart';
 import '../core/theme/app_theme.dart';
@@ -21,19 +21,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
     if (ad.id.isNotEmpty) {
       adRepo.logClick(ad.id);
     }
-    final rawUrl = ad.targetUrl.trim();
-    if (rawUrl.isNotEmpty) {
-      final fullUrl =
-          (rawUrl.startsWith('http://') || rawUrl.startsWith('https://'))
-          ? rawUrl
-          : 'https://$rawUrl';
-      final uri = Uri.tryParse(fullUrl);
-      if (uri != null) {
-        try {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        } catch (_) {}
-      }
-    }
+    await ExternalLinks.openWebUrl(ad.targetUrl);
   }
 
   @override
