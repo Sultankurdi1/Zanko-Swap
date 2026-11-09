@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const _green = Color(0xFF0E5C3A);
 const _paper = Color(0xFFFBF8F0);
@@ -11,14 +12,18 @@ class ZankoEmblemSplash extends StatefulWidget {
   final VoidCallback onFinished;
   final String topText;
   final String bottomText;
+  final Duration firstRunDuration;
   final Duration duration;
   const ZankoEmblemSplash({
     super.key,
     required this.onFinished,
     this.topText = 'ZANKOSWAP',
     this.bottomText = 'SWAP · SHARE · LEARN',
-    this.duration = const Duration(milliseconds: 6500),
+    this.firstRunDuration = const Duration(milliseconds: 6500),
+    this.duration = const Duration(milliseconds: 3500),
   });
+
+  static const _seenKey = 'emblem_splash_seen';
 
   @override
   State<ZankoEmblemSplash> createState() => _ZankoEmblemSplashState();
@@ -28,12 +33,25 @@ class _ZankoEmblemSplashState extends State<ZankoEmblemSplash>
     with SingleTickerProviderStateMixin {
   late final AnimationController _c = AnimationController(
     vsync: this,
-    duration: widget.duration,
+    duration: widget.firstRunDuration,
   );
 
   @override
   void initState() {
     super.initState();
+    _start();
+  }
+
+  Future<void> _start() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool(ZankoEmblemSplash._seenKey) == true) {
+        _c.duration = widget.duration;
+      } else {
+        await prefs.setBool(ZankoEmblemSplash._seenKey, true);
+      }
+    } catch (_) {}
+    if (!mounted) return;
     _c.forward().whenComplete(() {
       if (mounted) widget.onFinished();
     });
