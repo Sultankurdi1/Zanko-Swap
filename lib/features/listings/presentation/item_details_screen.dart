@@ -732,7 +732,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             ScaffoldMessenger.of(this.context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  AppStrings.of(context).genericError,
+                                  AppStrings.of(context).errorFor(e),
                                 ),
                               ),
                             );
@@ -801,7 +801,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(this.context).showSnackBar(
-        SnackBar(content: Text(AppStrings.of(this.context).genericError)),
+        SnackBar(content: Text(AppStrings.of(this.context).errorFor(e))),
       );
     }
   }

@@ -73,6 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _reportUser() async {
+    final s = AppStrings.of(context);
     final reason = await showModalBottomSheet<String>(
       context: context,
       useRootNavigator: true,
@@ -80,12 +81,12 @@ class _ChatScreenState extends State<ChatScreen> {
       builder: (ctx) => SafeArea(
         child: Wrap(
           children: [
-            const ListTile(title: Text('Why are you reporting this person?')),
-            for (final item in const <(String, String)>[
-              ('harassment', 'Harassment or bullying'),
-              ('spam', 'Spam or scam'),
-              ('inappropriate', 'Inappropriate messages'),
-              ('other', 'Something else'),
+            ListTile(title: Text(s.reportQuestion)),
+            for (final item in <(String, String)>[
+              ('harassment', s.reportHarassment),
+              ('inappropriate', s.reportSexual),
+              ('spam', s.reportSpam),
+              ('other', s.reportOther),
             ])
               ListTile(
                 leading: const Icon(Icons.flag_outlined),
@@ -107,14 +108,14 @@ class _ChatScreenState extends State<ChatScreen> {
         'reason': reason,
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Report sent. Thank you.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(s.reportSent)));
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppStrings.of(context).genericError)),
+          SnackBar(content: Text(AppStrings.of(context).errorFor(e))),
         );
       }
     }
@@ -173,7 +174,7 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppStrings.of(context).genericError)),
+          SnackBar(content: Text(AppStrings.of(context).errorFor(e))),
         );
       }
     } finally {
@@ -281,7 +282,7 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppStrings.of(context).genericError)),
+          SnackBar(content: Text(AppStrings.of(context).errorFor(e))),
         );
       }
     }
@@ -463,7 +464,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppStrings.of(context).genericError),
+            content: Text(AppStrings.of(context).errorFor(e)),
             duration: const Duration(seconds: 6),
           ),
         );

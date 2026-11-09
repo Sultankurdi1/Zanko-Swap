@@ -199,7 +199,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppStrings.of(context).genericError)),
+          SnackBar(content: Text(AppStrings.of(context).errorFor(e))),
         );
       }
     } finally {

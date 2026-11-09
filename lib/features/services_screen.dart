@@ -109,8 +109,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
         );
       } catch (_) {}
       if (mounted) _showMessage(AppStrings.of(context).placeAdded);
-    } catch (_) {
-      if (mounted) _showMessage(AppStrings.of(context).genericError);
+    } catch (e) {
+      if (mounted) _showMessage(AppStrings.of(context).errorFor(e));
     }
   }
 

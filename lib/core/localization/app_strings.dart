@@ -192,6 +192,45 @@ class AppStrings {
       : isArabic
       ? 'حدث خطأ. يرجى المحاولة مرة أخرى.'
       : 'Something went wrong. Please try again.';
+  String get inappropriateContent => isKurdish
+      ? 'ئەم دەقە وشەی نەشیاو، سێکسی یان هەڕەشەئامێزی تێدایە و ناتوانرێت بنێردرێت.'
+      : isArabic
+      ? 'يحتوي هذا النص على كلمات غير لائقة أو جنسية أو تهديدية ولا يمكن إرساله.'
+      : 'This text contains inappropriate, sexual or threatening words and cannot be sent.';
+  String errorFor(Object error) =>
+      error.toString().contains('inappropriate_content')
+      ? inappropriateContent
+      : genericError;
+  String get reportQuestion => isKurdish
+      ? 'بۆچی ڕاپۆرتی ئەم کەسە دەکەیت؟'
+      : isArabic
+      ? 'لماذا تبلغ عن هذا الشخص؟'
+      : 'Why are you reporting this person?';
+  String get reportHarassment => isKurdish
+      ? 'هەڕەشە، بێڕێزی یان ئازاردان'
+      : isArabic
+      ? 'تهديد أو إساءة أو تنمر'
+      : 'Threats, abuse or bullying';
+  String get reportSexual => isKurdish
+      ? 'قسە یان وێنەی سێکسی و نەشیاو'
+      : isArabic
+      ? 'كلام أو صور جنسية أو غير لائقة'
+      : 'Sexual or inappropriate messages or photos';
+  String get reportSpam => isKurdish
+      ? 'سپام یان فێڵ'
+      : isArabic
+      ? 'رسائل مزعجة أو احتيال'
+      : 'Spam or scam';
+  String get reportOther => isKurdish
+      ? 'هۆکاری تر'
+      : isArabic
+      ? 'سبب آخر'
+      : 'Something else';
+  String get reportSent => isKurdish
+      ? 'ڕاپۆرتەکە نێردرا. سوپاس.'
+      : isArabic
+      ? 'تم إرسال البلاغ. شكرًا لك.'
+      : 'Report sent. Thank you.';
   String get about => isKurdish
       ? 'دەربارەی ZankoSwap'
       : isArabic

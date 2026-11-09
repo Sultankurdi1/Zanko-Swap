@@ -65,6 +65,7 @@ class PrivacyPolicyText {
             '• گەیاندنی نامەکان و ناردنی ئاگادارکردنەوە بۆ نامەی نوێ و شوێنی نوێ.\n'
             '• پشکنینی ڕیکلام و وەسڵی پارەدان پێش بڵاوکردنەوە.\n'
             '• پشکنینی ئەو دامەزراوانەی بەکارهێنەران پێشنیاری دەکەن.\n'
+            '• پشکنینی خۆکاری دەقی نامە، ناو، بابەت و شوێنەکان بۆ ڕێگریکردن لە وشەی سێکسی، بێڕێزی و هەڕەشە. ئەم پشکنینە لە سێرڤەر و بێ دەستی مرۆڤ دەکرێت.\n'
             '• مامەڵەکردن لەگەڵ ڕاپۆرت، بلۆککردنی بەکارهێنەری خراپ، و لابردنی ناوەڕۆکی زیانبەخش.\n'
             '• چاککردنی کێشەکان.',
       ),
@@ -156,6 +157,7 @@ class PrivacyPolicyText {
             '• توصيل الرسائل وإرسال إشعارات الرسائل الجديدة والأماكن الجديدة.\n'
             '• مراجعة الإعلانات وإيصالات الدفع قبل النشر.\n'
             '• مراجعة المؤسسات التي يقترحها المستخدمون.\n'
+            '• فحص تلقائي لنصوص الرسائل والأسماء والإعلانات والأماكن لمنع الكلمات الجنسية والمسيئة والتهديدية. يتم هذا الفحص على الخادم دون تدخل بشري.\n'
             '• معالجة البلاغات وحظر المستخدمين المسيئين وإزالة المحتوى الضار.\n'
             '• إصلاح المشكلات.',
       ),
@@ -247,6 +249,7 @@ class PrivacyPolicyText {
             '• Deliver chat messages and send notifications about new messages and new places.\n'
             '• Review ads and payment receipts before an ad goes live.\n'
             '• Review suggested schools and institutions before they are published.\n'
+            '• Automatically check the text of messages, names, listings, and places to block sexual, abusive, and threatening words. This check runs on our server without a person reading your messages.\n'
             '• Handle reports, block abusive users, and remove harmful content.\n'
             '• Fix problems and keep the app working.',
       ),

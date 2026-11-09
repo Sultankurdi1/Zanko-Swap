@@ -149,7 +149,7 @@ class _SignInScreenState extends State<SignInScreen> {
     } on AuthException catch (e) {
       if (mounted) setState(() => error = _authError(e));
     } catch (e) {
-      if (mounted) setState(() => error = AppStrings.of(context).genericError);
+      if (mounted) setState(() => error = AppStrings.of(context).errorFor(e));
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -194,7 +194,7 @@ class _SignInScreenState extends State<SignInScreen> {
     } on AuthException catch (e) {
       if (mounted) setState(() => error = _authError(e));
     } catch (e) {
-      if (mounted) setState(() => error = AppStrings.of(context).genericError);
+      if (mounted) setState(() => error = AppStrings.of(context).errorFor(e));
     } finally {
       if (mounted) setState(() => busy = false);
     }
