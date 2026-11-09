@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../legal/privacy_policy_content.dart';
+import '../../legal/privacy_policy_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool isDark;
@@ -26,8 +28,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool notificationsEnabled = true;
-  bool locationEnabled = true;
   String selectedPreset = 'emerald';
 
   @override
@@ -291,10 +291,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 20),
           Text(
             s.isKurdish
-                ? 'ڕێکخستنە خزمەتگوزارییەکان'
+                ? 'تایبەتمەندی'
                 : s.isArabic
-                ? 'التفضيلات'
-                : 'Preferences',
+                ? 'الخصوصية'
+                : 'Privacy',
             style: TextStyle(
               fontSize: 14.5,
               fontWeight: FontWeight.w800,
@@ -308,52 +308,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: palette.border),
             ),
-            child: Column(
-              children: [
-                SwitchListTile(
-                  activeTrackColor: palette.primary,
-                  activeThumbColor: Colors.white,
-                  value: notificationsEnabled,
-                  onChanged: (v) => setState(() => notificationsEnabled = v),
-                  secondary: Icon(
-                    Icons.notifications_active_outlined,
-                    color: palette.accent,
-                  ),
-                  title: Text(
-                    s.isKurdish
-                        ? 'ئاگادارکردنەوەکان'
-                        : s.isArabic
-                        ? 'الإشعارات'
-                        : 'Notifications',
-                    style: TextStyle(
-                      color: palette.textPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+            child: ListTile(
+              leading: Icon(Icons.privacy_tip_outlined, color: palette.accent),
+              title: Text(
+                PrivacyPolicyText.of(locale.languageCode).title,
+                style: TextStyle(
+                  color: palette.textPrimary,
+                  fontWeight: FontWeight.bold,
                 ),
-                Divider(height: 1, color: palette.border),
-                SwitchListTile(
-                  activeTrackColor: palette.primary,
-                  activeThumbColor: Colors.white,
-                  value: locationEnabled,
-                  onChanged: (v) => setState(() => locationEnabled = v),
-                  secondary: Icon(
-                    Icons.location_on_outlined,
-                    color: palette.accent,
-                  ),
-                  title: Text(
-                    s.isKurdish
-                        ? 'شوێن'
-                        : s.isArabic
-                        ? 'الموقع'
-                        : 'Location',
-                    style: TextStyle(
-                      color: palette.textPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+              ),
+              trailing: Icon(
+                Icons.chevron_right_rounded,
+                color: palette.textSecondary,
+              ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PrivacyPolicyScreen(locale: locale),
                 ),
-              ],
+              ),
             ),
           ),
         ],

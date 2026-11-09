@@ -7,6 +7,7 @@ import '../core/localization/app_strings.dart';
 import '../core/theme/app_theme.dart';
 import '../core/notifications/push_notification_service.dart';
 import '../features/splash/animated_splash_screen.dart';
+import '../features/legal/privacy_policy_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/listings/presentation/add_listing_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
@@ -36,6 +37,7 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
   AppPalette currentPalette = AppPalette.emerald;
   int index = 0;
   bool _showSplash = true;
+  bool? _policyAccepted;
   String? _badgeUserId;
   Stream<List<Map<String, dynamic>>>? _chatsStream;
   Stream<List<Map<String, dynamic>>>? _messagesStream;
@@ -56,6 +58,9 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
   void initState() {
     super.initState();
     _loadPrefs();
+    PrivacyPolicyScreen.isAccepted().then((accepted) {
+      if (mounted) setState(() => _policyAccepted = accepted);
+    });
   }
 
   Future<void> _loadPrefs() async {
@@ -112,6 +117,16 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
                   if (mounted) {
                     setState(() => _showSplash = false);
                   }
+                },
+              )
+            : _policyAccepted == null
+            ? ColoredBox(color: currentPalette.bg)
+            : _policyAccepted == false
+            ? PrivacyPolicyScreen(
+                locale: locale,
+                onLocaleChanged: setLocale,
+                onAccepted: () {
+                  if (mounted) setState(() => _policyAccepted = true);
                 },
               )
             : Builder(
