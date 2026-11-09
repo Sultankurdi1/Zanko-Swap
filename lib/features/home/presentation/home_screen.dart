@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/config/platform_rules.dart';
+import '../../../core/data/auth_permissions.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/models/listing.dart';
@@ -1000,9 +1001,7 @@ class _EmeraldDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppStrings.of(context);
-    final currentUserEmail = Supabase.instance.client.auth.currentUser?.email
-        ?.toLowerCase()
-        .trim();
+    final isAdmin = AuthPermissions().isAdmin;
 
     return Drawer(
       backgroundColor: palette.bg,
@@ -1058,7 +1057,7 @@ class _EmeraldDrawer extends StatelessWidget {
                       s.promoteBusiness,
                       () => Navigator.pushNamed(context, '/advertise'),
                     ),
-                  if (currentUserEmail == 'tahasulaiman135@gmail.com')
+                  if (isAdmin)
                     _drawerItem(
                       Icons.admin_panel_settings_rounded,
                       _homeText(
