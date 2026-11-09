@@ -82,6 +82,29 @@ class SupabaseStorageService {
     return client.storage.from('profile-images').getPublicUrl(path);
   }
 
+  static Future<void> deleteAllUserFiles(String userId) async {
+    const buckets = [
+      'listing-images',
+      'profile-images',
+      'service-images',
+      receiptBucket,
+    ];
+    for (final bucket in buckets) {
+      try {
+        final files = await client.storage
+            .from(bucket)
+            .list(
+              path: userId,
+              searchOptions: const SearchOptions(limit: 1000),
+            );
+        final paths = files.map((f) => '$userId/${f.name}').toList();
+        if (paths.isNotEmpty) {
+          await client.storage.from(bucket).remove(paths);
+        }
+      } catch (_) {}
+    }
+  }
+
   static Future<String> uploadServiceImage({
     required String ownerId,
     required File file,

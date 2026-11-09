@@ -27,7 +27,7 @@ class ContactUsScreen extends StatelessWidget {
       } catch (_) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('هەڵە لە کردنەوەی بەستەر: $e')),
+            SnackBar(content: Text(AppStrings.of(context).genericError)),
           );
         }
       }

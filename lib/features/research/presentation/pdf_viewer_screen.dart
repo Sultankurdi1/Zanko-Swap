@@ -30,9 +30,9 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
       ).showSnackBar(SnackBar(content: Text(AppStrings.of(context).pdfSaved)));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppStrings.of(context).genericError)),
+        );
       }
     } finally {
       if (mounted) setState(() => downloading = false);

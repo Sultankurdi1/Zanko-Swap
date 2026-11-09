@@ -87,9 +87,9 @@ class _ResearchListScreenState extends State<ResearchListScreen> {
       await repo.delete(paper.id);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppStrings.of(context).genericError)),
+        );
       }
     }
   }

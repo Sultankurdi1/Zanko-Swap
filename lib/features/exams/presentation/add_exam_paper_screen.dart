@@ -156,7 +156,10 @@ class _AddExamPaperScreenState extends State<AddExamPaperScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.red.shade700, content: Text('$e')),
+          SnackBar(
+            backgroundColor: Colors.red.shade700,
+            content: Text(AppStrings.of(context).genericError),
+          ),
         );
       }
     } finally {

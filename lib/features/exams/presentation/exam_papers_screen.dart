@@ -335,9 +335,9 @@ class _ExamList extends StatelessWidget {
       await ExamRepository().delete(exam.id);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppStrings.of(context).genericError)),
+        );
       }
     }
   }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../../core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -249,9 +250,9 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('هەڵە لە ناردنی ڕیکلام: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.of(context).genericError)),
+      );
     } finally {
       if (mounted) setState(() => sending = false);
     }

@@ -166,7 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } on AuthException catch (e) {
       _msg(e.message);
     } catch (e) {
-      _msg(e.toString());
+      _msg(AppStrings.of(context).genericError);
     } finally {
       if (mounted) setState(() => saving = false);
     }

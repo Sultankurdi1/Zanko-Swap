@@ -109,8 +109,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
         );
       } catch (_) {}
       if (mounted) _showMessage(AppStrings.of(context).placeAdded);
-    } catch (e) {
-      _showMessage('$e');
+    } catch (_) {
+      if (mounted) _showMessage(AppStrings.of(context).genericError);
     }
   }
 
@@ -178,8 +178,8 @@ class _ServicesScreenState extends State<ServicesScreen> {
     try {
       await db.from('services').delete().eq('id', row['id']);
       if (mounted) setState(() {});
-    } catch (e) {
-      _showMessage('$e');
+    } catch (_) {
+      if (mounted) _showMessage(AppStrings.of(context).genericError);
     }
   }
 

@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../../core/localization/app_strings.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -197,9 +198,9 @@ class _AddListingScreenState extends State<AddListingScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('هەڵە: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppStrings.of(context).genericError)),
+        );
       }
     } finally {
       if (mounted) setState(() => saving = false);

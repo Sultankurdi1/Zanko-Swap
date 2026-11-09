@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_strings.dart';
 
@@ -115,13 +116,8 @@ class _SignInScreenState extends State<SignInScreen> {
       if (mounted) Navigator.of(context).pop();
     } on AuthException catch (e) {
       setState(() => error = _authError(e));
-    } catch (e) {
-      final msg = e.toString();
-      setState(() {
-        error = msg.contains('Invalid API key') || msg.contains('401')
-            ? 'Supabase API key ـەکە هەڵەیە؛ Publishable key ـی نوێ لە Supabase Dashboard دابنێ.'
-            : msg;
-      });
+    } catch (_) {
+      setState(() => error = AppStrings.of(context).genericError);
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -153,7 +149,7 @@ class _SignInScreenState extends State<SignInScreen> {
     } on AuthException catch (e) {
       if (mounted) setState(() => error = _authError(e));
     } catch (e) {
-      if (mounted) setState(() => error = '$e');
+      if (mounted) setState(() => error = AppStrings.of(context).genericError);
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -198,7 +194,7 @@ class _SignInScreenState extends State<SignInScreen> {
     } on AuthException catch (e) {
       if (mounted) setState(() => error = _authError(e));
     } catch (e) {
-      if (mounted) setState(() => error = '$e');
+      if (mounted) setState(() => error = AppStrings.of(context).genericError);
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -530,36 +526,38 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  if (defaultTargetPlatform == TargetPlatform.android) ...[
+                    const SizedBox(height: 12),
 
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0C271E),
-                      foregroundColor: Colors.white,
-                      side: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.08),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0C271E),
+                        foregroundColor: Colors.white,
+                        side: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.08),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                      onPressed: busy ? null : _google,
+                      icon: const Icon(
+                        Icons.account_circle_outlined,
+                        color: Color(0xFF34D399),
+                        size: 20,
+                      ),
+                      label: Text(
+                        s.isKurdish
+                            ? 'چوونەژوورەوە بە Gmail'
+                            : 'Continue with Google',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
-                    onPressed: busy ? null : _google,
-                    icon: const Icon(
-                      Icons.account_circle_outlined,
-                      color: Color(0xFF34D399),
-                      size: 20,
-                    ),
-                    label: Text(
-                      s.isKurdish
-                          ? 'چوونەژوورەوە بە Gmail'
-                          : 'Continue with Google',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
+                  ],
 
                   if (!isRegister) ...[
                     const SizedBox(height: 6),

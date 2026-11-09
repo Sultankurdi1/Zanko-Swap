@@ -201,9 +201,9 @@ class _ListingStatusList extends StatelessWidget {
       await ListingRepository().deleteListing(listing.id, user.id);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppStrings.of(context).genericError)),
+        );
       }
     }
   }

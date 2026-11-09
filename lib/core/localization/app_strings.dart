@@ -172,6 +172,26 @@ class AppStrings {
       : isArabic
       ? 'تسجيل الخروج'
       : 'Log out';
+  String get deleteAccount => isKurdish
+      ? 'سڕینەوەی هەژمار'
+      : isArabic
+      ? 'حذف الحساب'
+      : 'Delete account';
+  String get deleteAccountWarning => isKurdish
+      ? 'هەژمارەکەت و هەموو بابەت، شوێن، توێژینەوە، نامە و وێنەکانت بە یەکجاری دەسڕدرێنەوە. ئەم کارە ناگەڕێتەوە.'
+      : isArabic
+      ? 'سيتم حذف حسابك وجميع إعلاناتك وأماكنك وأبحاثك ورسائلك وصورك نهائيًا. لا يمكن التراجع عن ذلك.'
+      : 'Your account and all your listings, places, research, messages and photos will be permanently deleted. This cannot be undone.';
+  String get accountDeleted => isKurdish
+      ? 'هەژمارەکەت سڕایەوە.'
+      : isArabic
+      ? 'تم حذف حسابك.'
+      : 'Your account was deleted.';
+  String get genericError => isKurdish
+      ? 'هەڵەیەک ڕوویدا. تکایە دووبارە هەوڵ بدەرەوە.'
+      : isArabic
+      ? 'حدث خطأ. يرجى المحاولة مرة أخرى.'
+      : 'Something went wrong. Please try again.';
   String get about => isKurdish
       ? 'دەربارەی ZankoSwap'
       : isArabic

@@ -729,9 +729,13 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           } catch (e) {
                             setModalState(() => isSaving = false);
                             if (!mounted) return;
-                            ScaffoldMessenger.of(
-                              this.context,
-                            ).showSnackBar(SnackBar(content: Text('هەڵە: $e')));
+                            ScaffoldMessenger.of(this.context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppStrings.of(context).genericError,
+                                ),
+                              ),
+                            );
                           }
                         },
                   child: isSaving
@@ -796,9 +800,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
       Navigator.of(this.context).pop(true);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        this.context,
-      ).showSnackBar(SnackBar(content: Text('$e')));
+      ScaffoldMessenger.of(this.context).showSnackBar(
+        SnackBar(content: Text(AppStrings.of(this.context).genericError)),
+      );
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
+import '../../../core/data/supabase_storage_service.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/notifications/push_notification_service.dart';
 import '../../../core/theme/app_theme.dart';
@@ -369,12 +370,57 @@ class _ProfileBody extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
+                const SizedBox(height: 8),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFFF87171),
+                  ),
+                  onPressed: () => _confirmDeleteAccount(context, s),
+                  icon: const Icon(Icons.delete_forever_rounded, size: 18),
+                  label: Text(s.deleteAccount),
+                ),
               ]),
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+Future<void> _confirmDeleteAccount(BuildContext context, AppStrings s) async {
+  final messenger = ScaffoldMessenger.of(context);
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      title: Text(s.deleteAccount),
+      content: Text(s.deleteAccountWarning),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext, false),
+          child: Text(s.cancel),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: Colors.red),
+          onPressed: () => Navigator.pop(dialogContext, true),
+          child: Text(s.delete),
+        ),
+      ],
+    ),
+  );
+  if (confirmed != true) return;
+
+  final client = Supabase.instance.client;
+  final user = client.auth.currentUser;
+  if (user == null) return;
+  try {
+    await PushNotificationService.unregisterCurrentDevice();
+    await SupabaseStorageService.deleteAllUserFiles(user.id);
+    await client.rpc('delete_my_account');
+    await client.auth.signOut();
+    messenger.showSnackBar(SnackBar(content: Text(s.accountDeleted)));
+  } catch (_) {
+    messenger.showSnackBar(SnackBar(content: Text(s.genericError)));
   }
 }
 

@@ -9,3 +9,8 @@ android/.gradle/
 android/local.properties
 ios/Pods/
 macos/Pods/
+*.iml
+supabase/.temp/
+android/key.properties
+*.jks
+*.keystore

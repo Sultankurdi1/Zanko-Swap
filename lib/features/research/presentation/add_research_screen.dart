@@ -109,7 +109,7 @@ class _AddResearchScreenState extends State<AddResearchScreen> {
     } catch (e) {
       if (mounted) {
         final errorText = e.toString().toLowerCase();
-        String message = 'هەڵەیەک ڕوویدا لە بڵاوکردنەوەدا: $e';
+        String message = AppStrings.of(context).genericError;
         if (errorText.contains('network') || errorText.contains('socket')) {
           message = 'کێشە لە هێڵی ئینتەرنێت هەیە، دووبارە هەوڵبدەرەوە.';
         }
