@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../core/config/platform_rules.dart';
 import '../core/localization/app_strings.dart';
 import '../core/theme/app_theme.dart';
 import '../core/notifications/push_notification_service.dart';
@@ -344,9 +345,11 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
               const ServicesScreen(initialCategory: 'restaurant'),
           '/cafes': (_) => const ServicesScreen(initialCategory: 'cafe'),
           '/stationery': (_) => const ServicesScreen(initialCategory: 'copy'),
-          '/advertise': (_) => const CreateAdScreen(),
+          if (PlatformRules.paidAdsAllowed)
+            '/advertise': (_) => const CreateAdScreen(),
           '/my-listings': (_) => const MyListingsScreen(),
           '/contact': (_) => const ContactUsScreen(),
+          '/inbox': (_) => const InboxScreen(),
           '/saved': (_) => const SavedScreen(),
           '/sign-in': (_) => const SignInScreen(),
         },

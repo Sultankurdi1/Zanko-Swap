@@ -1,7 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../../../core/config/platform_rules.dart';
 import '../../../core/localization/app_strings.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -526,7 +526,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                     ),
                   ),
-                  if (defaultTargetPlatform == TargetPlatform.android) ...[
+                  if (PlatformRules.googleSignInAvailable) ...[
                     const SizedBox(height: 12),
 
                     OutlinedButton.icon(

@@ -6,6 +6,7 @@ import '../core/data/auth_permissions.dart';
 import '../core/data/external_links.dart';
 import '../core/data/supabase_storage_service.dart';
 import '../core/localization/app_strings.dart';
+import '../core/widgets/report_content.dart';
 import '../core/theme/app_theme.dart';
 
 class ServiceProfileScreen extends StatefulWidget {
@@ -278,6 +279,16 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
           ),
         ),
         actions: [
+          if (!canDelete)
+            IconButton(
+              tooltip: s.reportAction,
+              icon: Icon(Icons.flag_outlined, color: palette.textPrimary),
+              onPressed: () => reportContent(
+                context,
+                contentType: 'service',
+                contentId: '${service['id']}',
+              ),
+            ),
           if (canDelete)
             IconButton(
               tooltip: s.delete,

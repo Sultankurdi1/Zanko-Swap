@@ -32,10 +32,11 @@ class PrivacyPolicyText {
   }
 
   static const kurdish = PrivacyPolicyText(
-    title: 'سیاسەتی تایبەتمەندی',
+    title: 'سیاسەتی تایبەتمەندی و مەرجەکان',
     effective: 'بەرواری کارپێکردن: ٩ی تشرینی دووەمی ٢٠٢٦',
     agree: 'خوێندمەوە و ڕازیم',
-    agreeNote: 'بە دانانی "ڕازیم"، ڕازی دەبیت بەم سیاسەتە.',
+    agreeNote:
+        'بە دانانی "ڕازیم"، ڕازی دەبیت بە سیاسەتی تایبەتمەندی و مەرجەکانی بەکارهێنان.',
     sections: [
       PolicySection(
         '١. پێشەکی',
@@ -83,7 +84,8 @@ class PrivacyPolicyText {
         'تەنها لەگەڵ ئەو کۆمپانیایانە هاوبەشی دەکەین کە بەشێک لە ئەپەکە بەڕێوەدەبەن. لەوانەیە زانیارییەکان لە سێرڤەری دەرەوەی عێراق هەڵبگیرێن.\n\n'
             '• Supabase: هەژمار، داتابەیس و هەڵگرتنی فایل.\n'
             '• Google Firebase Cloud Messaging: ناردنی ئاگادارکردنەوە.\n'
-            '• Google Sign-In: چوونەژوورەوە بە Google ئەگەر هەڵیبژێریت.\n\n'
+            '• Google Sign-In: چوونەژوورەوە بە Google ئەگەر هەڵیبژێریت.\n'
+            '• Sightengine: پشکنینی خۆکاری ئەو وێنانەی بەرزیان دەکەیتەوە بۆ ڕووتی، پێش بڵاوکردنەوە.\n\n'
             'لەوانەیە زانیاری هاوبەش بکەین ئەگەر یاسا داوای بکات، یان بۆ پاراستنی بەکارهێنەران لە فێڵ و زیان.',
       ),
       PolicySection(
@@ -120,14 +122,24 @@ class PrivacyPolicyText {
             'واتسئاپ: ‎+964 750 435 9605\n'
             'تەلەفۆن: ‎+964 750 435 9605 یان ‎+964 773 405 9605',
       ),
+      PolicySection(
+        '١١. مەرجەکانی بەکارهێنان',
+        'بە بەکارهێنانی ZankoSwap ڕازی دەبیت بەم مەرجانە. هیچ لێبوردنێک بۆ ناوەڕۆکی نەشیاو یان بەکارهێنەری خراپ نییە.\n\n'
+            '• قسە، وێنە یان ناوەڕۆکی سێکسی، ڕووتی، هەڕەشە، جنێو، ڕەگەزپەرستی، ئازاردان یان فێڵ قەدەغەیە.\n'
+            '• تەنها ئەو شتانە بڵاو بکەرەوە کە مافی خۆتە و ڕاستن.\n'
+            '• هەر ناوەڕۆکێکی ڕاپۆرتکراو لە ماوەی ٢٤ کاتژمێردا دەپشکنین و ئەگەر یاسا شکێن بوو لایدەبەین.\n'
+            '• ئەو کەسانەی ئەم مەرجانە دەشکێنن، هەژمارەکەیان ڕادەگیرێت یان دەسڕدرێتەوە.\n'
+            '• دەتوانیت هەر بەکارهێنەرێک بلۆک بکەیت و هەر نامە، بابەت یان شوێنێک ڕاپۆرت بکەیت.',
+      ),
     ],
   );
 
   static const arabic = PrivacyPolicyText(
-    title: 'سياسة الخصوصية',
+    title: 'سياسة الخصوصية والشروط',
     effective: 'تاريخ السريان: ٩ تشرين الثاني ٢٠٢٦',
     agree: 'قرأتها وأوافق',
-    agreeNote: 'بالضغط على "أوافق"، فإنك توافق على هذه السياسة.',
+    agreeNote:
+        'بالضغط على "أوافق"، فإنك توافق على سياسة الخصوصية وشروط الاستخدام.',
     sections: [
       PolicySection(
         '١. مقدمة',
@@ -175,7 +187,8 @@ class PrivacyPolicyText {
         'نشارك البيانات فقط مع الشركات التي تشغّل أجزاء من التطبيق لصالحنا. قد تُخزَّن البيانات على خوادم خارج العراق.\n\n'
             '• Supabase: الحسابات وقاعدة البيانات وتخزين الملفات.\n'
             '• Google Firebase Cloud Messaging: الإشعارات.\n'
-            '• Google Sign-In: تسجيل الدخول عبر Google إذا اخترته.\n\n'
+            '• Google Sign-In: تسجيل الدخول عبر Google إذا اخترته.\n'
+            '• Sightengine: فحص تلقائي للصور التي ترفعها بحثًا عن العري قبل نشرها.\n\n'
             'قد نشارك المعلومات إذا طلب القانون ذلك، أو لحماية المستخدمين من الاحتيال والضرر.',
       ),
       PolicySection(
@@ -212,14 +225,24 @@ class PrivacyPolicyText {
             'واتساب: ‎+964 750 435 9605\n'
             'الهاتف: ‎+964 750 435 9605 أو ‎+964 773 405 9605',
       ),
+      PolicySection(
+        '١١. شروط الاستخدام',
+        'باستخدامك ZankoSwap فإنك توافق على هذه الشروط. لا تسامح إطلاقًا مع المحتوى غير اللائق أو المستخدمين المسيئين.\n\n'
+            '• يُمنع الكلام أو الصور أو المحتوى الجنسي أو العاري، والتهديد، والشتائم، والعنصرية، والتحرش، والاحتيال.\n'
+            '• انشر فقط ما تملك حقه وما هو صحيح.\n'
+            '• نراجع أي محتوى مُبلغ عنه خلال ٢٤ ساعة ونزيله إذا خالف الشروط.\n'
+            '• يتم إيقاف أو حذف حسابات من يخالفون هذه الشروط.\n'
+            '• يمكنك حظر أي مستخدم والإبلاغ عن أي رسالة أو إعلان أو مكان.',
+      ),
     ],
   );
 
   static const english = PrivacyPolicyText(
-    title: 'Privacy Policy',
+    title: 'Privacy Policy & Terms',
     effective: 'Effective date: November 9, 2026',
     agree: 'I have read it and agree',
-    agreeNote: 'By tapping "I agree", you accept this policy.',
+    agreeNote:
+        'By tapping "I agree", you accept the Privacy Policy and Terms of Use.',
     sections: [
       PolicySection(
         '1. Introduction',
@@ -267,7 +290,8 @@ class PrivacyPolicyText {
         'We share data only with the providers that run parts of the app for us. Data may be stored on servers outside Iraq.\n\n'
             '• Supabase: accounts, database, and file storage.\n'
             '• Google Firebase Cloud Messaging: push notifications.\n'
-            '• Google Sign-In: optional sign-in with Google.\n\n'
+            '• Google Sign-In: optional sign-in with Google.\n'
+            '• Sightengine: automatic nudity check of photos you upload, before they are published.\n\n'
             'We may also share information when the law requires it, or to protect users from fraud, abuse, or harm.',
       ),
       PolicySection(
@@ -303,6 +327,15 @@ class PrivacyPolicyText {
             'Email: tahasulaiman135@gmail.com\n'
             'WhatsApp: +964 750 435 9605\n'
             'Phone: +964 750 435 9605 or +964 773 405 9605',
+      ),
+      PolicySection(
+        '11. Terms of use',
+        'By using ZankoSwap you agree to these terms. There is zero tolerance for objectionable content or abusive users.\n\n'
+            '• Sexual or nude content, threats, insults, racism, harassment, and scams are not allowed, in words or images.\n'
+            '• Post only what you have the right to share and what is true.\n'
+            '• We review reported content within 24 hours and remove it if it breaks these terms.\n'
+            '• Accounts that break these terms are suspended or deleted.\n'
+            '• You can block any user and report any message, listing, or place.',
       ),
     ],
   );

@@ -38,14 +38,12 @@ class PushNotificationService {
           SnackBar(content: Text(body.isEmpty ? title : '$title: $body')),
         );
     });
-    FirebaseMessaging.onMessageOpenedApp.listen((_) {
-      navigatorKey.currentState?.pushNamed('/services');
-    });
+    FirebaseMessaging.onMessageOpenedApp.listen(_openFromNotification);
     final initialMessage = await messaging.getInitialMessage();
     if (initialMessage != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        navigatorKey.currentState?.pushNamed('/services');
-      });
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _openFromNotification(initialMessage),
+      );
     }
     messaging.onTokenRefresh.listen((token) {
       unawaited(_saveToken(token));
@@ -54,6 +52,11 @@ class PushNotificationService {
       if (state.session != null) unawaited(_registerCurrentDevice());
     });
     _initialized = true;
+  }
+
+  static void _openFromNotification(RemoteMessage message) {
+    final route = message.data.containsKey('chatId') ? '/inbox' : '/services';
+    navigatorKey.currentState?.pushNamed(route);
   }
 
   static Future<void> _registerCurrentDevice() async {

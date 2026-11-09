@@ -11,6 +11,7 @@ import '../../../core/data/supabase_storage_service.dart';
 import '../data/listing_repository.dart';
 import '../../chat/presentation/chat_screen.dart';
 import '../../../core/localization/app_strings.dart';
+import '../../../core/widgets/report_content.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
   final Listing listing;
@@ -202,6 +203,25 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                   ),
                                   onPressed: () =>
                                       _confirmDelete(context, palette),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                            ] else ...[
+                              CircleAvatar(
+                                backgroundColor: palette.surface.withValues(
+                                  alpha: 0.85,
+                                ),
+                                child: IconButton(
+                                  tooltip: AppStrings.of(context).reportAction,
+                                  icon: Icon(
+                                    Icons.flag_outlined,
+                                    color: palette.textPrimary,
+                                  ),
+                                  onPressed: () => reportContent(
+                                    context,
+                                    contentType: 'listing',
+                                    contentId: _currentListing.id,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),

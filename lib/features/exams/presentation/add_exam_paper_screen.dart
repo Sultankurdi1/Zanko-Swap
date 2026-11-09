@@ -158,7 +158,7 @@ class _AddExamPaperScreenState extends State<AddExamPaperScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red.shade700,
-            content: Text(AppStrings.of(context).genericError),
+            content: Text(AppStrings.of(context).errorFor(e)),
           ),
         );
       }

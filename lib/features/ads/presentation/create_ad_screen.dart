@@ -251,7 +251,7 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppStrings.of(context).genericError)),
+        SnackBar(content: Text(AppStrings.of(context).errorFor(e))),
       );
     } finally {
       if (mounted) setState(() => sending = false);

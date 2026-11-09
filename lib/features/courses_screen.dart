@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/config/platform_rules.dart';
 import '../core/data/external_links.dart';
 import '../core/localization/app_strings.dart';
 import '../core/models/ad_campaign.dart';
@@ -48,44 +49,46 @@ class _CoursesScreenState extends State<CoursesScreen> {
           ),
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: palette.buttonGradient,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: palette.primary.withValues(alpha: 0.35),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: FloatingActionButton.extended(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          focusElevation: 0,
-          hoverElevation: 0,
-          highlightElevation: 0,
-          foregroundColor: Colors.white,
-          onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    const CreateAdScreen(defaultPlacement: 'course'),
+      floatingActionButton: !PlatformRules.paidAdsAllowed
+          ? null
+          : Container(
+              decoration: BoxDecoration(
+                gradient: palette.buttonGradient,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: palette.primary.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-            );
-            setState(() {
-              refreshKey = UniqueKey();
-            });
-          },
-          icon: const Icon(Icons.add_rounded),
-          label: const Text(
-            'زیادکردنی کۆرس',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
+              child: FloatingActionButton.extended(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                focusElevation: 0,
+                hoverElevation: 0,
+                highlightElevation: 0,
+                foregroundColor: Colors.white,
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const CreateAdScreen(defaultPlacement: 'course'),
+                    ),
+                  );
+                  setState(() {
+                    refreshKey = UniqueKey();
+                  });
+                },
+                icon: const Icon(Icons.add_rounded),
+                label: const Text(
+                  'زیادکردنی کۆرس',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
       body: RefreshIndicator(
         color: palette.primary,
         backgroundColor: palette.surfaceHighlight,

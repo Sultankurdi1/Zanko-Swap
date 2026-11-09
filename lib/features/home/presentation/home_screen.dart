@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/config/platform_rules.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/models/listing.dart';
@@ -1051,11 +1052,12 @@ class _EmeraldDrawer extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 children: [
-                  _drawerItem(
-                    Icons.campaign_rounded,
-                    s.promoteBusiness,
-                    () => Navigator.pushNamed(context, '/advertise'),
-                  ),
+                  if (PlatformRules.paidAdsAllowed)
+                    _drawerItem(
+                      Icons.campaign_rounded,
+                      s.promoteBusiness,
+                      () => Navigator.pushNamed(context, '/advertise'),
+                    ),
                   if (currentUserEmail == 'tahasulaiman135@gmail.com')
                     _drawerItem(
                       Icons.admin_panel_settings_rounded,

@@ -197,10 +197,24 @@ class AppStrings {
       : isArabic
       ? 'يحتوي هذا النص على كلمات غير لائقة أو جنسية أو تهديدية ولا يمكن إرساله.'
       : 'This text contains inappropriate, sexual or threatening words and cannot be sent.';
-  String errorFor(Object error) =>
-      error.toString().contains('inappropriate_content')
-      ? inappropriateContent
-      : genericError;
+  String get inappropriateImage => isKurdish
+      ? 'ئەم وێنەیە نەشیاوە و ناتوانرێت بەرز بکرێتەوە.'
+      : isArabic
+      ? 'هذه الصورة غير لائقة ولا يمكن رفعها.'
+      : 'This image is inappropriate and cannot be uploaded.';
+  String get imageCheckUnavailable => isKurdish
+      ? 'ئێستا ناتوانرێت وێنەکە بپشکنرێت. تکایە دواتر هەوڵ بدەرەوە.'
+      : isArabic
+      ? 'تعذر فحص الصورة الآن. يرجى المحاولة لاحقًا.'
+      : 'The image cannot be checked right now. Please try again later.';
+  String errorFor(Object error) {
+    final text = error.toString();
+    if (text.contains('inappropriate_content')) return inappropriateContent;
+    if (text.contains('inappropriate_image')) return inappropriateImage;
+    if (text.contains('moderation_unavailable')) return imageCheckUnavailable;
+    return genericError;
+  }
+
   String get reportQuestion => isKurdish
       ? 'بۆچی ڕاپۆرتی ئەم کەسە دەکەیت؟'
       : isArabic
@@ -231,6 +245,26 @@ class AppStrings {
       : isArabic
       ? 'تم إرسال البلاغ. شكرًا لك.'
       : 'Report sent. Thank you.';
+  String get reportContentQuestion => isKurdish
+      ? 'بۆچی ڕاپۆرتی ئەمە دەکەیت؟'
+      : isArabic
+      ? 'لماذا تبلغ عن هذا؟'
+      : 'Why are you reporting this?';
+  String get reportAction => isKurdish
+      ? 'ڕاپۆرتکردن'
+      : isArabic
+      ? 'إبلاغ'
+      : 'Report';
+  String get signInToReport => isKurdish
+      ? 'بۆ ڕاپۆرتکردن سەرەتا بچۆ ژوورەوە.'
+      : isArabic
+      ? 'سجّل الدخول أولًا للإبلاغ.'
+      : 'Sign in to report.';
+  String get alreadyReported => isKurdish
+      ? 'پێشتر ڕاپۆرتی ئەمەت کردووە.'
+      : isArabic
+      ? 'لقد أبلغت عن هذا من قبل.'
+      : 'You already reported this.';
   String get about => isKurdish
       ? 'دەربارەی ZankoSwap'
       : isArabic

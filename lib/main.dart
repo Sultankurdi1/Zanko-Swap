@@ -21,7 +21,8 @@ Future<void> main() async {
   }
 
   if (SupabaseConfig.isConfigured &&
-      defaultTargetPlatform == TargetPlatform.android) {
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS)) {
     try {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
