@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import { importPKCS8, SignJWT } from 'jose';
+import { createClient } from 'npm:@supabase/supabase-js@2';
+import { importPKCS8, SignJWT } from 'npm:jose@5';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
