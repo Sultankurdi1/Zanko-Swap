@@ -592,7 +592,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       label: Text(
                         s.isKurdish
-                            ? 'چوونەژوورەوە بە Gmail'
+                            ? 'چوونەژوورەوە بە Google'
+                            : s.isArabic
+                            ? 'المتابعة باستخدام Google'
                             : 'Continue with Google',
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
