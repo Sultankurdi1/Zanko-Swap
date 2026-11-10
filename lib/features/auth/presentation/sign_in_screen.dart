@@ -209,7 +209,7 @@ class _SignInScreenState extends State<SignInScreen> {
     final s = AppStrings.of(context);
     final text = e.toString();
     final code =
-        RegExp(r'ApiException: (\d+)').firstMatch(text)?.group(1) ??
+        RegExp(r'sign_in_failed, [^:,]*: ?(\d+)').firstMatch(text)?.group(1) ??
         (e is PlatformException ? e.code : '');
     String pick(String ku, String ar, String en) =>
         s.isKurdish ? ku : (s.isArabic ? ar : en);
