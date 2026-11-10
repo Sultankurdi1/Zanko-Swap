@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/config/platform_rules.dart';
+import '../../admin/admin_panel_screen.dart';
 import '../../../core/data/auth_permissions.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
@@ -1076,6 +1077,16 @@ class _EmeraldDrawer extends StatelessWidget {
                         );
                       },
                     ),
+                  if (isAdmin)
+                    _drawerItem(Icons.shield_outlined, s.adminPanel, () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AdminPanelScreen(),
+                        ),
+                      );
+                    }),
                   Divider(color: palette.border),
                   _drawerItem(Icons.settings_rounded, s.settings, () {
                     Navigator.pop(context);

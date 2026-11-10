@@ -265,6 +265,41 @@ class AppStrings {
       : isArabic
       ? 'لقد أبلغت عن هذا من قبل.'
       : 'You already reported this.';
+  String rateSellerTitle(String name) => isKurdish
+      ? 'هەڵسەنگاندنی $name'
+      : isArabic
+      ? 'تقييم $name'
+      : 'Rate $name';
+  String get rateAction => isKurdish
+      ? 'هەڵسەنگاندن'
+      : isArabic
+      ? 'تقييم'
+      : 'Rate';
+  String get rateSeller => isKurdish
+      ? 'هەڵسەنگاندنی ئەم کەسە'
+      : isArabic
+      ? 'تقييم هذا الشخص'
+      : 'Rate this person';
+  String get ratingSaved => isKurdish
+      ? 'هەڵسەنگاندنەکەت تۆمار کرا. سوپاس.'
+      : isArabic
+      ? 'تم حفظ تقييمك. شكرًا لك.'
+      : 'Your rating was saved. Thank you.';
+  String get ratingNeedsChat => isKurdish
+      ? 'تەنها دەتوانیت کەسێک هەڵبسەنگێنیت کە چاتت لەگەڵی کردووە.'
+      : isArabic
+      ? 'يمكنك تقييم الأشخاص الذين تحدثت معهم فقط.'
+      : 'You can only rate people you have chatted with.';
+  String get newSeller => isKurdish
+      ? 'نوێ'
+      : isArabic
+      ? 'جديد'
+      : 'New';
+  String get adminPanel => isKurdish
+      ? 'پانێڵی ئەدمین'
+      : isArabic
+      ? 'لوحة الإدارة'
+      : 'Admin panel';
   String get about => isKurdish
       ? 'دەربارەی ZankoSwap'
       : isArabic

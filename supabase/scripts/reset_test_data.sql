@@ -23,7 +23,7 @@ begin
     'messages', 'chats', 'chat_notifications_sent', 'content_reports',
     'user_reports', 'user_blocks', 'service_updates', 'place_broadcasts',
     'services', 'listings', 'research', 'exam_papers', 'ad_campaigns',
-    'saved_items', 'favorites'
+    'saved_items', 'favorites', 'seller_ratings', 'app_errors'
   ] loop
     if to_regclass('public.' || tbl) is not null then
       execute format('truncate table public.%I restart identity cascade', tbl);

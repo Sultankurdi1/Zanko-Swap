@@ -54,6 +54,8 @@ class PrivacyPolicyText {
             '• توێژینەوە و پرسیارەکانی تاقیکردنەوە: ناونیشان، وەسف، لینک، فایل و وێنە.\n'
             '• چات: نامەکانت، ئەو کەسانەی چاتیان لەگەڵ دەکەیت، خوێندرانەوەی نامە، بلۆک و ڕاپۆرتەکان.\n'
             '• ڕیکلام: دەق، وێنە، لینک، بودجە، و وێنەی وەسڵی پارەدان (FastPay یان FIB).\n'
+            '• هەڵسەنگاندن: ئەو ئەستێرانەی بە کەسانێک دەدەیت کە چاتت لەگەڵیان کردووە.\n'
+            '• ڕاپۆرتی هەڵە: کاتێک ئەپەکە تووشی هەڵە دەبێت، پەیامی هەڵەکە، زانیاری تەکنیکی، جۆری مۆبایل (Android یان iOS)، وەشانی ئەپ و ناسنامەی هەژمارەکەت.\n'
             '• ئامێر: تۆکنی ئاگادارکردنەوە (notification) بۆ ئامێرەکەت (لە Android).\n'
             '• دڵخوازەکان و ڕێکخستنەکان: لەسەر ئامێرەکەی خۆت هەڵدەگیرێن.\n\n'
             'وێنە و کامێرا تەنها کاتێک بەکاردێن کە خۆت وێنەیەک هەڵدەبژێریت یان دەیگریت.',
@@ -76,7 +78,8 @@ class PrivacyPolicyText {
             '• بۆ هەمووان، میوانانیش: بابەتە چالاکەکانت، شوێنەکان (بە تەلەفۆن و شوێنی سەر نەخشەوە)، توێژینەوە، پرسیارەکانی تاقیکردنەوە، و ڕیکلامە پەسەندکراوەکان.\n'
             '• تەنها تۆ و کەسەکەی تر: نامەکانی چات.\n'
             '• تەنها تۆ و ئەدمینەکانمان: وەسڵی پارەدانی ڕیکلام.\n'
-            '• تەنها تۆ: دڵخوازەکان، بلۆکەکان و ڕاپۆرتەکانت.\n\n'
+            '• تەنها تۆ: دڵخوازەکان، بلۆکەکان و ڕاپۆرتەکانت.\n'
+            '• هەڵسەنگاندن: تەنها تێکڕای ئەستێرەکان و ژمارەیان پیشان دەدرێت، نەک ئەوەی کێ چ ئەستێرەیەکی داوە.\n\n'
             'ئەگەر ژمارەی تەلەفۆن لە بابەت یان شوێنێکدا دابنێیت، بۆ هەمووان دیارە.',
       ),
       PolicySection(
@@ -157,6 +160,8 @@ class PrivacyPolicyText {
             '• الأبحاث وأسئلة الامتحانات: العناوين والأوصاف والروابط والملفات والصور.\n'
             '• الدردشة: رسائلك، والأشخاص الذين تتحدث معهم، وحالة القراءة، والحظر والبلاغات.\n'
             '• الإعلانات المدفوعة: النص والصورة والرابط والميزانية وصورة إيصال الدفع (FastPay أو FIB).\n'
+            '• التقييمات: النجوم التي تمنحها لأشخاص تحدثت معهم.\n'
+            '• تقارير الأخطاء: عند حدوث خطأ في التطبيق، رسالة الخطأ والتفاصيل التقنية ونوع الهاتف (Android أو iOS) وإصدار التطبيق ومعرّف حسابك.\n'
             '• الجهاز: رمز الإشعارات لجهازك (على Android).\n'
             '• المفضلة والإعدادات: تُحفظ على جهازك.\n\n'
             'تُستخدم الصور والكاميرا فقط عندما تختار صورة أو تلتقطها بنفسك.',
@@ -179,7 +184,8 @@ class PrivacyPolicyText {
             '• للجميع، بمن فيهم الزوار: إعلاناتك النشطة، والأماكن (مع الهاتف والموقع)، والأبحاث، وأسئلة الامتحانات، والإعلانات المعتمدة.\n'
             '• أنت والطرف الآخر فقط: رسائل الدردشة.\n'
             '• أنت ومشرفونا فقط: إيصالات دفع الإعلانات.\n'
-            '• أنت فقط: المفضلة والحظر والبلاغات.\n\n'
+            '• أنت فقط: المفضلة والحظر والبلاغات.\n'
+            '• التقييمات: يظهر متوسط النجوم وعددها فقط، وليس من أعطى كل تقييم.\n\n'
             'إذا وضعت رقم هاتف في إعلان أو مكان، فسيكون مرئيًا للجميع.',
       ),
       PolicySection(
@@ -260,6 +266,8 @@ class PrivacyPolicyText {
             '• Research and exam papers: titles, descriptions, links, files, and photos.\n'
             '• Chat: messages you send, the people you chat with, read status, blocks, and reports.\n'
             '• Ads: ad text, image, link, budget, and a photo of your payment receipt (FastPay or FIB).\n'
+            '• Ratings: the stars you give to people you have chatted with.\n'
+            '• Error reports: when the app hits an error, the error message, technical details, phone platform (Android or iOS), app version, and your account ID.\n'
             '• Device: a push notification token for your device (Android).\n'
             '• Saved items and settings: stored on your device.\n\n'
             'Photos and the camera are used only when you pick or take a photo.',
@@ -282,7 +290,8 @@ class PrivacyPolicyText {
             '• Everyone, including guests: your active listings, places (including their phone and location), research, exam papers, and approved ads.\n'
             '• Only you and the other person: your chat messages.\n'
             '• Only you and our admins: your ad payment receipts.\n'
-            '• Only you: your favorites, blocks, and reports.\n\n'
+            '• Only you: your favorites, blocks, and reports.\n'
+            '• Ratings: only the average and number of stars are shown, never who gave which rating.\n\n'
             'If you put a phone number in a listing or a place, it is public.',
       ),
       PolicySection(

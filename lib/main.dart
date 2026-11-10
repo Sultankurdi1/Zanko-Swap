@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/app.dart';
 import 'core/config/supabase_config.dart';
+import 'core/data/error_reporter.dart';
 import 'core/notifications/push_notification_service.dart';
 import 'firebase_options.dart';
 
@@ -31,5 +32,6 @@ Future<void> main() async {
     } catch (_) {}
   }
 
+  ErrorReporter.install();
   runApp(const ZankoSwapApp());
 }

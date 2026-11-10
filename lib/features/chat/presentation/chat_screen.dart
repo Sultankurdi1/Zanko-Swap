@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/localization/app_strings.dart';
+import '../../../core/widgets/rate_seller_dialog.dart';
 import '../../../core/theme/app_theme.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -551,16 +552,31 @@ class _ChatScreenState extends State<ChatScreen> {
           PopupMenuButton<String>(
             tooltip: 'Chat safety options',
             onSelected: (value) {
+              if (value == 'rate') {
+                showRateSellerDialog(
+                  context,
+                  sellerId: widget.otherUserId,
+                  sellerName: widget.otherUserName,
+                );
+              }
               if (value == 'report') _reportUser();
               if (value == 'block') _toggleBlock();
             },
             itemBuilder: (_) => [
-              const PopupMenuItem(
+              PopupMenuItem(
+                value: 'rate',
+                child: ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.star_border_rounded),
+                  title: Text(AppStrings.of(context).rateSeller),
+                ),
+              ),
+              PopupMenuItem(
                 value: 'report',
                 child: ListTile(
                   dense: true,
-                  leading: Icon(Icons.flag_outlined),
-                  title: Text('Report user'),
+                  leading: const Icon(Icons.flag_outlined),
+                  title: Text(AppStrings.of(context).reportAction),
                 ),
               ),
               PopupMenuItem(

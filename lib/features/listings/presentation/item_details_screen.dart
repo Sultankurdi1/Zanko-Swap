@@ -11,6 +11,7 @@ import '../../../core/data/supabase_storage_service.dart';
 import '../data/listing_repository.dart';
 import '../../chat/presentation/chat_screen.dart';
 import '../../../core/localization/app_strings.dart';
+import '../../../core/data/rating_repository.dart';
 import '../../../core/widgets/report_content.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
@@ -24,11 +25,13 @@ class ItemDetailsScreen extends StatefulWidget {
 class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   late Listing _currentListing;
   int _activeImageIndex = 0;
+  late final Future<RatingSummary> _ratingFuture;
 
   @override
   void initState() {
     super.initState();
     _currentListing = widget.listing;
+    _ratingFuture = RatingRepository().summary(_currentListing.sellerId);
   }
 
   String _formatCategory(String type) {
@@ -395,12 +398,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                             color: palette.textPrimary,
                                           ),
                                         ),
-                                        const SizedBox(width: 4),
-                                        Icon(
-                                          Icons.check_circle_rounded,
-                                          color: palette.accent,
-                                          size: 16,
-                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 2),
@@ -414,23 +411,32 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                   ],
                                 ),
                               ),
-                              const Row(
-                                children: [
-                                  Icon(
-                                    Icons.star_rounded,
-                                    color: Colors.amber,
-                                    size: 18,
-                                  ),
-                                  SizedBox(width: 2),
-                                  Text(
-                                    '4.9',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 13,
-                                      color: Colors.amber,
-                                    ),
-                                  ),
-                                ],
+                              FutureBuilder<RatingSummary>(
+                                future: _ratingFuture,
+                                builder: (context, snap) {
+                                  final rating =
+                                      snap.data ?? RatingSummary.empty;
+                                  return Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.star_rounded,
+                                        color: Colors.amber,
+                                        size: 18,
+                                      ),
+                                      const SizedBox(width: 2),
+                                      Text(
+                                        rating.total == 0
+                                            ? AppStrings.of(context).newSeller
+                                            : '${rating.average.toStringAsFixed(1)} (${rating.total})',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13,
+                                          color: Colors.amber,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
                             ],
                           ),
