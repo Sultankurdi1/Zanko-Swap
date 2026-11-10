@@ -47,7 +47,14 @@ jobs:
             echo "::error::Add the ANDROID_KEYSTORE_BASE64 and ANDROID_KEYSTORE_PASSWORD repository secrets."
             exit 1
           fi
-          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload-keystore.p12"
+          if ! printf '%s' "$KEYSTORE_BASE64" | tr -d ' \r\n\t' | base64 --decode > "$RUNNER_TEMP/upload-keystore.p12"; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not valid. Paste the whole keystore-base64.txt file again."
+            exit 1
+          fi
+          if ! keytool -list -storetype pkcs12 -keystore "$RUNNER_TEMP/upload-keystore.p12" -storepass "$KEYSTORE_PASSWORD" > /dev/null 2>&1; then
+            echo "::error::The keystore could not be opened. Check ANDROID_KEYSTORE_PASSWORD, or paste keystore-base64.txt again."
+            exit 1
+          fi
           cat > android/key.properties <<EOF
           storeFile=$RUNNER_TEMP/upload-keystore.p12
           storeType=pkcs12
