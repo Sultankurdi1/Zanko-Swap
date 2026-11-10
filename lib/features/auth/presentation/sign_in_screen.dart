@@ -1,7 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/config/platform_rules.dart';
+import '../../../core/data/error_reporter.dart';
 import '../../../core/localization/app_strings.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -191,13 +193,54 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       }
       if (mounted) Navigator.of(context).pop();
-    } on AuthException catch (e) {
+    } on AuthException catch (e, stack) {
+      ErrorReporter.report('Google sign-in (Supabase): ${e.message}', stack);
       if (mounted) setState(() => error = _authError(e));
-    } catch (e) {
-      if (mounted) setState(() => error = AppStrings.of(context).errorFor(e));
+    } catch (e, stack) {
+      ErrorReporter.report('Google sign-in: $e', stack);
+      final message = _googleError(e);
+      if (mounted && message != null) setState(() => error = message);
     } finally {
       if (mounted) setState(() => busy = false);
     }
+  }
+
+  String? _googleError(Object e) {
+    final s = AppStrings.of(context);
+    final text = e.toString();
+    final code =
+        RegExp(r'ApiException: (\d+)').firstMatch(text)?.group(1) ??
+        (e is PlatformException ? e.code : '');
+    String pick(String ku, String ar, String en) =>
+        s.isKurdish ? ku : (s.isArabic ? ar : en);
+    final String message;
+    switch (code) {
+      case '12501':
+      case 'sign_in_canceled':
+        return null;
+      case '10':
+        message = pick(
+          'Google ئەم وەشانەی ئەپەکە ناناسێتەوە. پەنجەمۆری SHA-1 لە Firebase تۆمار نەکراوە یان هێشتا جێگیر نەبووە.',
+          'لا يتعرف Google على هذه النسخة من التطبيق. بصمة SHA-1 غير مسجلة في Firebase.',
+          'Google does not recognise this build of the app. The SHA-1 fingerprint is not registered in Firebase yet.',
+        );
+      case '12500':
+        message = pick(
+          'ڕێکخستنی چوونەژوورەوەی Google تەواو نییە (OAuth consent screen).',
+          'إعداد تسجيل الدخول عبر Google غير مكتمل (OAuth consent screen).',
+          'Google sign-in setup is incomplete (OAuth consent screen).',
+        );
+      case '7':
+      case 'network_error':
+        message = pick(
+          'پەیوەندی ئینتەرنێت نییە. دووبارە هەوڵ بدەرەوە.',
+          'لا يوجد اتصال بالإنترنت. حاول مرة أخرى.',
+          'No internet connection. Please try again.',
+        );
+      default:
+        message = s.genericError;
+    }
+    return code.isEmpty ? message : '$message (Google: $code)';
   }
 
   String _authError(AuthException e) {
