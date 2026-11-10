@@ -8,3 +8,8 @@
 # Google Sign-In
 -keep class io.flutter.plugins.googlesignin.** { *; }
 -keep class com.google.android.gms.auth.api.signin.** { *; }
+
+# Kotlin runtime and coroutines used by JNI suspend calls, in case shrinking
+# is turned back on.
+-keep class kotlin.** { *; }
+-keep class kotlinx.coroutines.** { *; }
