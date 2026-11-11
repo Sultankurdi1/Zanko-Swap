@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../data/ad_repository.dart';
+import '../data/ad_prices.dart';
 import '../../../core/models/ad_campaign.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/data/supabase_storage_service.dart';
@@ -30,11 +31,15 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
   late String placement;
   int days = 7;
   bool sending = false;
+  Map<String, int> prices = Map.of(AdPrices.defaults);
 
   @override
   void initState() {
     super.initState();
     placement = widget.defaultPlacement;
+    AdPrices.load().then((p) {
+      if (mounted) setState(() => prices = p);
+    });
   }
 
   @override
@@ -47,7 +52,10 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
     super.dispose();
   }
 
-  int get budget => (placement == 'home' ? 15000 : 5000) * (days ~/ 7);
+  int get budget => AdPrices.total(
+    prices[placement] ?? AdPrices.defaults[placement] ?? 0,
+    days,
+  );
 
   void _copyToClipboard(String text, String label) {
     Clipboard.setData(ClipboardData(text: text));

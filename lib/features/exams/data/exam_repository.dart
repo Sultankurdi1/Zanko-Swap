@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/data/removed_rows.dart';
 import '../../../core/models/exam_paper.dart';
 
 class ExamRepository {
@@ -50,23 +51,29 @@ class ExamRepository {
     if (normalizedYear != null && normalizedYear.isNotEmpty) {
       query = query.eq('year', normalizedYear);
     }
-    return query.order('createdAt', ascending: false).map((rows) {
-      final filtered = subject == null || subject.trim().isEmpty
-          ? rows
-          : rows
-                .where(
-                  (row) => '${row['subject'] ?? ''}'.toLowerCase().contains(
-                    subject.trim().toLowerCase(),
-                  ),
-                )
-                .toList();
-      return filtered.map(ExamPaper.fromMap).toList();
-    });
+    return RemovedRows.hide(
+      'exam_papers',
+      query.order('createdAt', ascending: false).map((rows) {
+        final filtered = subject == null || subject.trim().isEmpty
+            ? rows
+            : rows
+                  .where(
+                    (row) => '${row['subject'] ?? ''}'.toLowerCase().contains(
+                      subject.trim().toLowerCase(),
+                    ),
+                  )
+                  .toList();
+        return filtered.map(ExamPaper.fromMap).toList();
+      }),
+      (p) => p.id,
+    );
   }
 
   Future<void> update(String id, Map<String, dynamic> data) =>
       db.from('exam_papers').update(data).eq('id', id);
 
-  Future<void> delete(String id) =>
-      db.from('exam_papers').delete().eq('id', id);
+  Future<void> delete(String id) async {
+    await db.from('exam_papers').delete().eq('id', id);
+    RemovedRows.mark('exam_papers', id);
+  }
 }

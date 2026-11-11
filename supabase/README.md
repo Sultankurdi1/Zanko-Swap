@@ -17,6 +17,7 @@ Each file was run once, in the numbered order. To rebuild the database from scra
 | 17 | Full table policy reset (the current rules) |
 | 18 | Admin panel access, seller ratings, app error reports |
 | 19 | Map location required for places, research PDF storage, listing price check, 13+ age check |
+| 20 | Ad prices the admin can change from the app |
 
 New changes go in a new file with the next number.
 

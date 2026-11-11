@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/models/ad_campaign.dart';
+import '../data/ad_prices.dart';
 import '../../../core/data/supabase_storage_service.dart';
 
 class AdminAdsDashboardScreen extends StatefulWidget {
@@ -280,6 +281,11 @@ class _AdminAdsDashboardScreenState extends State<AdminAdsDashboardScreen> {
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.price_change_rounded),
+            tooltip: 'نرخی ڕیکلام',
+            onPressed: () => AdPrices.showEditor(context),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
             onPressed: _fetchAds,

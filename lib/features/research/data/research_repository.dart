@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/data/removed_rows.dart';
 import '../../../core/models/research_paper.dart';
 
 class ResearchRepository {
@@ -46,13 +47,20 @@ class ResearchRepository {
     if (stageValue != null && stageValue.isNotEmpty) {
       query = query.eq('stage', stageValue);
     }
-    return query
-        .order('createdAt', ascending: false)
-        .map((rows) => rows.map(ResearchPaper.fromMap).toList());
+    return RemovedRows.hide(
+      'research',
+      query
+          .order('createdAt', ascending: false)
+          .map((rows) => rows.map(ResearchPaper.fromMap).toList()),
+      (r) => r.id,
+    );
   }
 
   Future<void> update(String id, Map<String, dynamic> data) =>
       db.from('research').update(data).eq('id', id);
 
-  Future<void> delete(String id) => db.from('research').delete().eq('id', id);
+  Future<void> delete(String id) async {
+    await db.from('research').delete().eq('id', id);
+    RemovedRows.mark('research', id);
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/data/removed_rows.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/localization/app_strings.dart';
 import '../../core/theme/app_theme.dart';
@@ -361,6 +362,8 @@ class _ReportsTab extends StatelessWidget {
                     _ => 'service_updates',
                   };
                   await _db.from(table).delete().eq('id', id);
+                  RemovedRows.mark(table, id);
+                  RemovedRows.mark('$table:active', id);
                   await _db
                       .from('content_reports')
                       .delete()
@@ -529,6 +532,8 @@ class _HiddenTab extends StatelessWidget {
           style: TextButton.styleFrom(foregroundColor: Colors.red),
           onPressed: () => _run(context, () async {
             await _db.from(table).delete().eq('id', row['id']);
+            RemovedRows.mark(table, row['id']);
+            RemovedRows.mark('$table:active', row['id']);
             reload();
           }),
           child: Text(AppStrings.of(context).delete),

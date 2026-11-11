@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/data/removed_rows.dart';
 import '../../../core/models/listing.dart';
 
 class ListingRepository {
@@ -30,9 +31,13 @@ class ListingRepository {
       stream = stream.eq('departmentId', departmentId!);
     }
     if (stage != null) stream = stream.eq('stage', stage);
-    return stream
-        .order('createdAt', ascending: false)
-        .map((rows) => rows.map(Listing.fromMap).toList());
+    return RemovedRows.hide(
+      'listings:active',
+      stream
+          .order('createdAt', ascending: false)
+          .map((rows) => rows.map(Listing.fromMap).toList()),
+      (l) => l.id,
+    );
   }
 
   Future<String> createListing(Map<String, dynamic> data) async {
@@ -49,17 +54,31 @@ class ListingRepository {
     return '${row['id']}';
   }
 
-  Stream<List<Listing>> streamMyListings(String sellerId) => db
-      .from('listings')
-      .stream(primaryKey: ['id'])
-      .eq('sellerId', sellerId)
-      .order('createdAt', ascending: false)
-      .map((r) => r.map(Listing.fromMap).toList());
+  Stream<List<Listing>> streamMyListings(String sellerId) => RemovedRows.hide(
+    'listings',
+    db
+        .from('listings')
+        .stream(primaryKey: ['id'])
+        .eq('sellerId', sellerId)
+        .order('createdAt', ascending: false)
+        .map((r) => r.map(Listing.fromMap).toList()),
+    (l) => l.id,
+  );
 
-  Future<void> updateStatus(String id, String status) => db
-      .from('listings')
-      .update({'status': status, 'updatedAt': DateTime.now().toIso8601String()})
-      .eq('id', id);
+  Future<void> updateStatus(String id, String status) async {
+    await db
+        .from('listings')
+        .update({
+          'status': status,
+          'updatedAt': DateTime.now().toIso8601String(),
+        })
+        .eq('id', id);
+    if (status == 'active') {
+      RemovedRows.unmark('listings:active', id);
+    } else {
+      RemovedRows.mark('listings:active', id);
+    }
+  }
 
   Future<void> deleteListing(String id, String sellerId) async {
     final user = db.auth.currentUser;
@@ -71,5 +90,7 @@ class ListingRepository {
     } else {
       await db.from('listings').delete().eq('id', id).eq('sellerId', sellerId);
     }
+    RemovedRows.mark('listings', id);
+    RemovedRows.mark('listings:active', id);
   }
 }

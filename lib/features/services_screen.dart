@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../core/data/removed_rows.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
@@ -26,11 +27,15 @@ class _ServicesScreenState extends State<ServicesScreen> {
       _openServicesStream();
   final search = TextEditingController();
 
-  Stream<List<Map<String, dynamic>>> _openServicesStream() => db
-      .from('services')
-      .stream(primaryKey: ['id'])
-      .eq('active', true)
-      .order('createdAt', ascending: false);
+  Stream<List<Map<String, dynamic>>> _openServicesStream() => RemovedRows.hide(
+    'services',
+    db
+        .from('services')
+        .stream(primaryKey: ['id'])
+        .eq('active', true)
+        .order('createdAt', ascending: false),
+    (row) => row['id'],
+  );
   late String category;
   String query = '';
   bool get isDedicated => category != 'all';
@@ -181,7 +186,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
     if (confirmed != true) return;
     try {
       await db.from('services').delete().eq('id', row['id']);
-      if (mounted) setState(() {});
+      RemovedRows.mark('services', row['id']);
     } catch (_) {
       if (mounted) _showMessage(AppStrings.of(context).genericError);
     }

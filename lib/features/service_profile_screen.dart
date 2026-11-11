@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../core/data/removed_rows.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -102,6 +103,7 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
     }
     try {
       await db.from('services').delete().eq('id', widget.service['id']);
+      RemovedRows.mark('services', widget.service['id']);
       if (mounted) {
         Navigator.pop(context, true);
       }
