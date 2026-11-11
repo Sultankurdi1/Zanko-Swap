@@ -138,10 +138,7 @@ def poster_a4():
         draw.line([(dot_x - 12, dot_y), (dot_x - 3, dot_y + 10), (dot_x + 13, dot_y - 10)], fill=WHITE, width=8)
         y += th + 60
 
-    bottom = qr_card(img, w // 2, y + 110, 1000, "سکان بکە و دایبگرە", "بەخۆڕاییە، بە کوردی و عەرەبی و English", 1.0)
-    url = font(LATIN_FONT, 46)
-    t = DOWNLOAD_URL.replace("https://", "")
-    draw.text(((w - draw.textlength(t, font=url)) / 2, min(bottom + 70, h - 120)), t, font=url, fill=(235, 230, 255))
+    qr_card(img, w // 2, y + 140, 1000, "سکان بکە و دایبگرە", "بەخۆڕاییە، بە کوردی و عەرەبی و English", 1.0)
     img.convert("RGB").save(OUT / "poster-a4.png", dpi=(300, 300), optimize=True)
 
 
@@ -163,11 +160,7 @@ def counter_card_a6():
     draw.text((bx + bw - 30 - draw.textlength("%", font=pct), y + 12), "%", font=pct, fill=WHITE)
     y += bh + 60
 
-    bottom = qr_card(img, w // 2, y, 600, "سکان بکە و دایبگرە", "کتێب بکڕە و بفرۆشە", 0.8)
-    url = font(LATIN_FONT, 30)
-    t = DOWNLOAD_URL.replace("https://", "")
-    draw = ImageDraw.Draw(img)
-    draw.text(((w - draw.textlength(t, font=url)) / 2, min(bottom + 50, h - 70)), t, font=url, fill=(235, 230, 255))
+    qr_card(img, w // 2, y + 20, 620, "سکان بکە و دایبگرە", "کتێب بکڕە و بفرۆشە", 0.8)
     img.convert("RGB").save(OUT / "counter-card-a6.png", dpi=(300, 300), optimize=True)
 
 

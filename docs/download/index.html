@@ -66,7 +66,6 @@ footer a { color: #fff; }
 
   <div class="card">
     <p id="status">بەم زووانە لە فرۆشگاکان بەردەست دەبێت</p>
-    <!-- When the app is live, change class "soon" to "live" and set href to the store link. -->
     <a class="store soon" id="play" href="#" aria-disabled="true">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3.6 1.8 13.8 12 3.6 22.2c-.4-.2-.6-.6-.6-1.1V2.9c0-.5.2-.9.6-1.1Zm11.6 11.6 2.5 2.5-11.5 6.6 9-9.1Zm3.9-2.2c.6.3.9.8.9 1.3s-.3 1-.9 1.3l-2.6 1.5-2.8-2.8 2.8-2.8 2.6 1.5ZM6.2 1.5l11.5 6.6-2.5 2.5-9-9.1Z"/></svg>
       <span>Google Play<small>بەم زووانە</small></span>
@@ -91,5 +90,34 @@ footer a { color: #fff; }
     <a href="../">سیاسەتی تایبەتمەندی و مەرجەکان</a>
   </footer>
 </main>
+<script>
+  // Fill these in when the app is live. Phones are then sent straight to their store.
+  var PLAY_URL = "";
+  var IOS_URL = "";
+
+  function goLive(id, url) {
+    var a = document.getElementById(id);
+    a.href = url;
+    a.className = "store live";
+    a.removeAttribute("aria-disabled");
+    a.querySelector("small").textContent = "ئێستا دایبگرە";
+  }
+  if (PLAY_URL) goLive("play", PLAY_URL);
+  if (IOS_URL) goLive("ios", IOS_URL);
+  if (PLAY_URL || IOS_URL) {
+    document.getElementById("status").textContent = "بەخۆڕایی دایبگرە";
+  }
+
+  var ua = navigator.userAgent || "";
+  var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && "ontouchend" in document);
+  if (location.search.indexOf("stay") === -1) {
+    if (isAndroid && PLAY_URL) location.replace(PLAY_URL);
+    else if (isIOS && IOS_URL) location.replace(IOS_URL);
+  }
+  document.querySelectorAll(".store.soon").forEach(function (a) {
+    a.addEventListener("click", function (e) { e.preventDefault(); });
+  });
+</script>
 </body>
 </html>
