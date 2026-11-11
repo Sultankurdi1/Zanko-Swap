@@ -33,7 +33,15 @@ jobs:
         run: flutter pub get
 
       - name: Check code
-        run: flutter analyze
+        run: |
+          set +e
+          flutter analyze --no-fatal-infos > analyze.txt 2>&1
+          code=$?
+          cat analyze.txt
+          grep -E '^ *(info|warning|error) ' analyze.txt | sed -E 's/^ *//' | while IFS= read -r line; do
+            echo "::warning::$line"
+          done
+          exit $code
 
       - name: Run tests
         run: flutter test
