@@ -606,6 +606,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&auto=format&fit=crop&q=60',
                       onTap: () => Navigator.pushNamed(context, '/research'),
                     ),
+                    _UnifiedImageCategoryCard(
+                      palette: palette,
+                      title: _homeText(
+                        s,
+                        'ئەسیلەکان',
+                        'الأسئلة',
+                        'Exam papers',
+                      ),
+                      imageUrl:
+                          'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&auto=format&fit=crop&q=60',
+                      onTap: () => Navigator.pushNamed(context, '/exams'),
+                    ),
                   ],
                 ),
               ),
