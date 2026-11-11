@@ -6,7 +6,7 @@ workflows:
     integrations:
       app_store_connect: ZankoSwap App Store key
     environment:
-      flutter: stable
+      flutter: 3.47.9
       xcode: latest
       cocoapods: default
       ios_signing:
@@ -35,7 +35,7 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 60
     environment:
-      flutter: stable
+      flutter: 3.47.9
       android_signing:
         - zankoswap_upload_key
     scripts:
@@ -59,7 +59,7 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 60
     environment:
-      flutter: stable
+      flutter: 3.47.9
       xcode: latest
       cocoapods: default
     scripts:

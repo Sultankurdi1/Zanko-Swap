@@ -27,6 +27,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.47.9
           cache: true
 
       - name: Get packages
@@ -71,8 +72,11 @@ jobs:
           keyAlias=upload
           EOF
 
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build APK and Play Store bundle
+        run: |
+          BUILD_NUMBER=$((GITHUB_RUN_NUMBER + 100))
+          flutter build apk --release --build-number=$BUILD_NUMBER
+          flutter build appbundle --release --build-number=$BUILD_NUMBER
 
       - name: Upload APK
         uses: actions/upload-artifact@v5
@@ -80,3 +84,10 @@ jobs:
           name: ZankoSwap-test-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 14
+
+      - name: Upload Play Store bundle
+        uses: actions/upload-artifact@v5
+        with:
+          name: ZankoSwap-play-store-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
