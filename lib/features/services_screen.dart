@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/data/auth_permissions.dart';
+import '../core/data/digits.dart';
+import '../core/widgets/location_picker_screen.dart';
 import '../core/data/external_links.dart';
 import '../core/data/supabase_storage_service.dart';
 import '../core/localization/app_strings.dart';
@@ -81,7 +85,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
       }
 
       final parsedCopyPrice = draft.type == 'copy' && draft.copyPrice.isNotEmpty
-          ? int.tryParse(draft.copyPrice.replaceAll(RegExp(r'[^0-9]'), ''))
+          ? Digits.parse(draft.copyPrice)
           : null;
 
       final insertedPlace = await db
@@ -561,7 +565,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
-                          '${row['offer']}',
+                          s.discountLabel('${row['offer']}'.trim()),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -757,9 +761,10 @@ class _AddServiceDialogState extends State<_AddServiceDialog> {
   final phone = TextEditingController();
   final menuUrl = TextEditingController();
   final copyPrice = TextEditingController();
-  final locationLink = TextEditingController();
   late String type;
   XFile? image;
+  LatLng? location;
+  String? error;
 
   @override
   void initState() {
@@ -769,41 +774,10 @@ class _AddServiceDialogState extends State<_AddServiceDialog> {
 
   @override
   void dispose() {
-    for (final c in [
-      name,
-      address,
-      offer,
-      phone,
-      menuUrl,
-      copyPrice,
-      locationLink,
-    ]) {
+    for (final c in [name, address, offer, phone, menuUrl, copyPrice]) {
       c.dispose();
     }
     super.dispose();
-  }
-
-  (double?, double?) _extractCoords(String link) {
-    if (link.isEmpty) return (null, null);
-    try {
-      final reg = RegExp(r'@(-?\d+\.\d+),(-?\d+\.\d+)');
-      final match = reg.firstMatch(link);
-      if (match != null) {
-        return (
-          double.tryParse(match.group(1)!),
-          double.tryParse(match.group(2)!),
-        );
-      }
-      final qReg = RegExp(r'q=(-?\d+\.\d+),(-?\d+\.\d+)');
-      final qMatch = qReg.firstMatch(link);
-      if (qMatch != null) {
-        return (
-          double.tryParse(qMatch.group(1)!),
-          double.tryParse(qMatch.group(2)!),
-        );
-      }
-    } catch (_) {}
-    return (null, null);
   }
 
   InputDecoration _dialogInputDecor(
@@ -913,17 +887,31 @@ class _AddServiceDialogState extends State<_AddServiceDialog> {
               const SizedBox(height: 10),
               TextField(
                 controller: offer,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  Digits.onlyDigits,
+                  LengthLimitingTextInputFormatter(3),
+                ],
                 style: TextStyle(
                   color: widget.palette.textPrimary,
                   fontSize: 13,
                 ),
-                decoration: _dialogInputDecor(s.studentDiscount),
+                decoration: _dialogInputDecor(
+                  s.discountPercent,
+                  hint: '10',
+                  prefixIcon: Icon(
+                    Icons.percent_rounded,
+                    color: widget.palette.accent,
+                    size: 18,
+                  ),
+                ),
               ),
               const SizedBox(height: 10),
               if (isCopyShop) ...[
                 TextField(
                   controller: copyPrice,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [Digits.onlyDigits],
                   style: TextStyle(
                     color: widget.palette.textPrimary,
                     fontSize: 13,
@@ -953,26 +941,52 @@ class _AddServiceDialogState extends State<_AddServiceDialog> {
                 ),
                 const SizedBox(height: 10),
               ],
-              TextField(
-                controller: locationLink,
-                style: TextStyle(
-                  color: widget.palette.textPrimary,
-                  fontSize: 13,
-                ),
-                decoration: _dialogInputDecor(
-                  s.isKurdish
-                      ? 'بەستەری لۆکەیشن (Google Maps)'
-                      : s.isArabic
-                      ? 'رابط الموقع (خرائط Google)'
-                      : 'Maps Link',
-                  hint: 'https://maps.app.goo.gl/...',
-                  prefixIcon: Icon(
-                    Icons.location_on_outlined,
-                    color: widget.palette.accent,
-                    size: 18,
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(46),
+                  foregroundColor: location == null
+                      ? widget.palette.accent
+                      : Colors.green.shade600,
+                  side: BorderSide(
+                    color:
+                        (location == null
+                                ? widget.palette.accent
+                                : Colors.green.shade600)
+                            .withValues(alpha: 0.5),
                   ),
                 ),
+                onPressed: () async {
+                  final picked = await LocationPickerScreen.open(
+                    context,
+                    initial: location,
+                  );
+                  if (picked != null && mounted) {
+                    setState(() {
+                      location = picked;
+                      error = null;
+                    });
+                  }
+                },
+                icon: Icon(
+                  location == null
+                      ? Icons.add_location_alt_rounded
+                      : Icons.check_circle_rounded,
+                  size: 18,
+                ),
+                label: Text(
+                  location == null ? s.locationOnMap : s.locationChosen,
+                ),
               ),
+              if (error != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  error!,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
               const SizedBox(height: 14),
               if (image != null) ...[
                 ClipRRect(
@@ -1020,20 +1034,31 @@ class _AddServiceDialogState extends State<_AddServiceDialog> {
             backgroundColor: widget.palette.primary,
           ),
           onPressed: () {
-            if (name.text.trim().isEmpty || address.text.trim().isEmpty) return;
-            final coords = _extractCoords(locationLink.text.trim());
+            final discount = Digits.parse(offer.text);
+            final problem =
+                name.text.trim().isEmpty || address.text.trim().isEmpty
+                ? s.nameAndAddressRequired
+                : discount != null && (discount < 1 || discount > 100)
+                ? s.discountInvalid
+                : location == null
+                ? s.locationRequired
+                : null;
+            if (problem != null) {
+              setState(() => error = problem);
+              return;
+            }
             Navigator.pop(
               context,
               _ServiceDraft(
                 name: name.text.trim(),
                 type: type,
                 address: address.text.trim(),
-                offer: offer.text.trim(),
+                offer: discount == null ? '' : '$discount%',
                 phone: phone.text.trim(),
                 menuUrl: isCopyShop ? '' : menuUrl.text.trim(),
                 copyPrice: isCopyShop ? copyPrice.text.trim() : '',
-                latitude: coords.$1,
-                longitude: coords.$2,
+                latitude: location!.latitude,
+                longitude: location!.longitude,
                 image: image,
               ),
             );

@@ -20,6 +20,8 @@
 		<string>ZankoSwap needs access to your photos so you can add pictures to your listings, places, ads and profile.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>ZankoSwap needs the camera so you can take photos of the items you list.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>ZankoSwap uses your location only when you add a place, so its pin on the map is in the right spot.</string>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>CFBundleDevelopmentRegion</key>

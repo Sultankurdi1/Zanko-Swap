@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/models/academic_path.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/data/supabase_storage_service.dart';
+import '../../../core/data/digits.dart';
+import 'package:flutter/services.dart';
 import '../../academic/academic_path_picker.dart';
 import '../../auth/presentation/sign_in_screen.dart';
 import '../data/listing_repository.dart';
@@ -146,6 +148,14 @@ class _AddListingScreenState extends State<AddListingScreen> {
       return;
     }
 
+    final price = Digits.parse(priceController.text);
+    if (transactionType == 'price' && (price == null || price <= 0)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.of(context).priceRequired)),
+      );
+      return;
+    }
+
     setState(() => saving = true);
     try {
       var authUser = Supabase.instance.client.auth.currentUser;
@@ -174,9 +184,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
         'description': descriptionController.text.trim(),
         'type': listingType,
         'transactionType': transactionType,
-        'priceIQD': transactionType == 'price'
-            ? int.tryParse(priceController.text.trim()) ?? 0
-            : 0,
+        'priceIQD': transactionType == 'price' ? price : 0,
         'condition': condition,
         'edition': null,
         'subject': null,
@@ -516,6 +524,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                 controller: priceController,
                 hint: '15000',
                 keyboardType: TextInputType.number,
+                inputFormatters: [Digits.onlyDigits],
               ),
             ],
 
@@ -677,10 +686,12 @@ class _AddListingScreenState extends State<AddListingScreen> {
     String? hint,
     TextInputType keyboardType = TextInputType.text,
     Widget? prefixIcon,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       style: TextStyle(color: palette.textPrimary, fontSize: 13),
       decoration: _inputDecoration(palette, hint: hint, prefixIcon: prefixIcon),
     );

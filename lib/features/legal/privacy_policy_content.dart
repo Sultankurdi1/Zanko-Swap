@@ -18,7 +18,7 @@ class PrivacyPolicyText {
     required this.sections,
   });
 
-  static const version = '2026-11-09';
+  static const version = '2026-11-12';
 
   static PrivacyPolicyText of(String languageCode) {
     switch (languageCode) {
@@ -49,8 +49,9 @@ class PrivacyPolicyText {
             '• هەژمار: ئیمەیڵ یان ژمارەی تەلەفۆن، و وشەی نهێنی بە شێوەی شاردراوە.\n'
             '• چوونەژوورەوە بە Google: ناو، ئیمەیڵ و وێنەی هەژماری Google (لە Android).\n'
             '• پرۆفایل: ناو، وێنە، و ژمارەی تەلەفۆن ئەگەر بتەوێت.\n'
+            '• ڕێکەوتی لەدایکبوون: تەنها بۆ دڵنیابوون لەوەی تەمەنت ١٣ ساڵ یان زیاترە. بە کەس پیشان نادرێت.\n'
             '• بابەتەکان: ناونیشان، وەسف، نرخ، باری بابەت، وێنە، زانکۆ، کۆلێژ، بەش و قۆناغ.\n'
-            '• شوێنەکان: ناو، جۆر، ناونیشان، تەلەفۆن، داشکاندن، لینکی مینیو، وێنە، و ئەو شوێنەی لەسەر نەخشە دیاری دەکەیت.\n'
+            '• شوێنەکان: ناو، جۆر، ناونیشان، تەلەفۆن، داشکاندن، لینکی مینیو، وێنە، و ئەو شوێنەی لەسەر نەخشە دیاری دەکەیت. شوێنی مۆبایلەکەت تەنها ئەو کاتە بەکاردێت کە خۆت کلیک لە "شوێنی ئێستام" دەکەیت، و جیا هەڵناگیرێت. نەخشەکە لە OpenStreetMap ـەوە باردەکرێت.\n'
             '• توێژینەوە و پرسیارەکانی تاقیکردنەوە: ناونیشان، وەسف، لینک، فایل و وێنە.\n'
             '• چات: نامەکانت، ئەو کەسانەی چاتیان لەگەڵ دەکەیت، خوێندرانەوەی نامە، بلۆک و ڕاپۆرتەکان.\n'
             '• ڕیکلام: دەق، وێنە، لینک، بودجە، و وێنەی وەسڵی پارەدان (FastPay یان FIB).\n'
@@ -116,7 +117,7 @@ class PrivacyPolicyText {
       ),
       PolicySection(
         '٩. منداڵان',
-        'ZankoSwap بۆ قوتابیانی ١٣ ساڵ و سەرووترە. بە ئاگاداری زانیاری لە منداڵانی خوار ١٣ ساڵ کۆناکەینەوە. ئەگەر پێتوایە منداڵێکی خوار ١٣ ساڵ هەژماری دروست کردووە، ئیمەیڵمان بۆ بنێرە و دەیسڕینەوە.',
+        'ZankoSwap بۆ قوتابیانی ١٣ ساڵ و سەرووترە. لە کاتی دروستکردنی هەژماردا ڕێکەوتی لەدایکبوون دەپرسین، و ئەگەر تەمەن لە ١٣ ساڵ کەمتر بێت هەژمارەکە دەسڕدرێتەوە. بە ئاگاداری زانیاری لە منداڵانی خوار ١٣ ساڵ کۆناکەینەوە. ئەگەر پێتوایە منداڵێکی خوار ١٣ ساڵ هەژماری دروست کردووە، ئیمەیڵمان بۆ بنێرە و دەیسڕینەوە.',
       ),
       PolicySection(
         '١٠. گۆڕانکاری و پەیوەندی',
@@ -155,8 +156,9 @@ class PrivacyPolicyText {
             '• الحساب: البريد الإلكتروني أو رقم الهاتف، وكلمة مرور مشفرة.\n'
             '• تسجيل الدخول عبر Google: الاسم والبريد الإلكتروني وصورة الحساب (على Android).\n'
             '• الملف الشخصي: الاسم والصورة ورقم الهاتف اختياريًا.\n'
+            '• تاريخ الميلاد: فقط للتأكد من أن عمرك ١٣ عامًا أو أكثر. لا يُعرض لأي أحد.\n'
             '• الإعلانات المنشورة: العنوان والوصف والسعر والحالة والصور والجامعة والكلية والقسم والمرحلة.\n'
-            '• الأماكن: الاسم والنوع والعنوان والهاتف والعرض ورابط القائمة والصورة والموقع الذي تحدده على الخريطة.\n'
+            '• الأماكن: الاسم والنوع والعنوان والهاتف والعرض ورابط القائمة والصورة والموقع الذي تحدده على الخريطة. يُستخدم موقع هاتفك فقط عندما تضغط على "موقعي الحالي" ولا يُحفظ بشكل منفصل. تُحمَّل الخريطة من OpenStreetMap.\n'
             '• الأبحاث وأسئلة الامتحانات: العناوين والأوصاف والروابط والملفات والصور.\n'
             '• الدردشة: رسائلك، والأشخاص الذين تتحدث معهم، وحالة القراءة، والحظر والبلاغات.\n'
             '• الإعلانات المدفوعة: النص والصورة والرابط والميزانية وصورة إيصال الدفع (FastPay أو FIB).\n'
@@ -222,7 +224,7 @@ class PrivacyPolicyText {
       ),
       PolicySection(
         '٩. الأطفال',
-        'ZankoSwap مخصص للطلاب من عمر ١٣ عامًا فأكثر. لا نجمع عن علم معلومات من أطفال دون ١٣ عامًا. إذا كنت تعتقد أن طفلًا دون ١٣ عامًا أنشأ حسابًا، راسلنا وسنحذفه.',
+        'ZankoSwap مخصص للطلاب من عمر ١٣ عامًا فأكثر. نسأل عن تاريخ الميلاد عند إنشاء الحساب، ويُحذف الحساب إذا كان العمر أقل من ١٣ عامًا. لا نجمع عن علم معلومات من أطفال دون ١٣ عامًا. إذا كنت تعتقد أن طفلًا دون ١٣ عامًا أنشأ حسابًا، راسلنا وسنحذفه.',
       ),
       PolicySection(
         '١٠. التغييرات والتواصل',
@@ -261,8 +263,9 @@ class PrivacyPolicyText {
             '• Account: email address or phone number, and an encrypted password.\n'
             '• Google sign-in: name, email address, and profile photo from your Google account (Android).\n'
             '• Profile: display name, profile photo, and optional phone number.\n'
+            '• Date of birth: only to confirm you are 13 or older. It is never shown to anyone.\n'
             '• Listings: title, description, price, condition, photos, university, college, department, and stage.\n'
-            '• Places: name, type, address, phone, offer, menu link, photo, and the map location you choose.\n'
+            '• Places: name, type, address, phone, offer, menu link, photo, and the map location you choose. Your phone\'s location is used only when you tap "My location" and is not stored separately. Map tiles load from OpenStreetMap.\n'
             '• Research and exam papers: titles, descriptions, links, files, and photos.\n'
             '• Chat: messages you send, the people you chat with, read status, blocks, and reports.\n'
             '• Ads: ad text, image, link, budget, and a photo of your payment receipt (FastPay or FIB).\n'
@@ -328,7 +331,7 @@ class PrivacyPolicyText {
       ),
       PolicySection(
         '9. Children',
-        'ZankoSwap is for students aged 13 and older. We do not knowingly collect information from children under 13. If you believe a child under 13 has created an account, email us and we will delete it.',
+        'ZankoSwap is for students aged 13 and older. We ask for your date of birth when you create an account, and accounts under 13 are deleted. We do not knowingly collect information from children under 13. If you believe a child under 13 has created an account, email us and we will delete it.',
       ),
       PolicySection(
         '10. Changes and contact',

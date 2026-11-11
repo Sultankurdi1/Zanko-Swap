@@ -212,6 +212,23 @@ class AppStrings {
     if (text.contains('inappropriate_content')) return inappropriateContent;
     if (text.contains('inappropriate_image')) return inappropriateImage;
     if (text.contains('moderation_unavailable')) return imageCheckUnavailable;
+    if (text.contains('location_required')) return locationRequired;
+    if (text.contains('price_required')) return priceRequired;
+    if (text.contains('too_young')) return tooYoungBody;
+    if (text.contains('Payload too large') ||
+        text.contains('maximum allowed size')) {
+      return pdfTooLarge(20);
+    }
+    if (text.contains('mime type') || text.contains('invalid_mime_type')) {
+      return onlyPdf;
+    }
+    if (text.contains('upload_limit')) {
+      return _t(
+        'گەیشتیتە زۆرترین ژمارەی فایل. هەندێک لە توێژینەوە کۆنەکانت بسڕەوە.',
+        'وصلت إلى الحد الأقصى للملفات. احذف بعض أبحاثك القديمة.',
+        'You reached the file limit. Delete some old research first.',
+      );
+    }
     return genericError;
   }
 
@@ -716,6 +733,104 @@ class AppStrings {
       : isArabic
       ? 'حدث خطأ.'
       : 'Something went wrong.';
+
+  String _t(String ku, String ar, String en) =>
+      isKurdish ? ku : (isArabic ? ar : en);
+
+  String get pickLocation =>
+      _t('دیاریکردنی شوێن', 'تحديد الموقع', 'Pick location');
+  String get pickLocationHint => _t(
+    'نەخشەکە بجوڵێنە تا نیشانە سوورەکە ڕێک لەسەر شوێنەکە بێت',
+    'حرّك الخريطة حتى تكون العلامة الحمراء فوق المكان تماماً',
+    'Move the map until the red pin is exactly on the place',
+  );
+  String get myLocation => _t('شوێنی ئێستام', 'موقعي الحالي', 'My location');
+  String get confirmLocation =>
+      _t('ئەم شوێنە دیاری بکە', 'تأكيد هذا الموقع', 'Use this location');
+  String get turnOnLocation => _t(
+    'تکایە GPS ـی مۆبایلەکەت هەڵبکە',
+    'يرجى تشغيل GPS في هاتفك',
+    'Please turn on location (GPS)',
+  );
+  String get locationPermissionNeeded => _t(
+    'ڕێگە بە ئەپەکە بدە شوێنەکەت بزانێت، یان شوێنەکە بە دەست لەسەر نەخشە دیاری بکە',
+    'اسمح للتطبيق بمعرفة موقعك، أو حدّد المكان يدوياً على الخريطة',
+    'Allow location access, or place the pin by hand on the map',
+  );
+  String get locationOnMap =>
+      _t('شوێن لەسەر نەخشە', 'الموقع على الخريطة', 'Location on map');
+  String get locationChosen =>
+      _t('شوێن دیاری کرا ✓', 'تم تحديد الموقع ✓', 'Location set ✓');
+  String get locationRequired => _t(
+    'تکایە شوێنی ڕاستەقینەی شوێنەکە لەسەر نەخشە دیاری بکە',
+    'يرجى تحديد الموقع الحقيقي على الخريطة',
+    'Please set the real location on the map',
+  );
+  String get discountPercent =>
+      _t('داشکاندن بۆ قوتابیان (%)', 'خصم الطلاب (%)', 'Student discount (%)');
+  String discountLabel(String value) => _t(
+    'داشکاندن بۆ قوتابیان: $value',
+    'خصم الطلاب: $value',
+    'Student discount: $value',
+  );
+  String get discountInvalid => _t(
+    'داشکاندن دەبێت ژمارەیەک بێت لە ١ تا ١٠٠',
+    'يجب أن يكون الخصم رقماً من 1 إلى 100',
+    'Discount must be a number from 1 to 100',
+  );
+  String get nameAndAddressRequired => _t(
+    'ناو و ناونیشانی شوێنەکە پێویستە',
+    'اسم المكان وعنوانه مطلوبان',
+    'Place name and address are required',
+  );
+  String get priceRequired => _t(
+    'تکایە نرخێکی دروست بنووسە',
+    'يرجى كتابة سعر صحيح',
+    'Please enter a valid price',
+  );
+
+  String get attachPdf =>
+      _t('فایلی PDF هەڵبژێرە', 'اختر ملف PDF', 'Choose a PDF file');
+  String get changePdf =>
+      _t('گۆڕینی فایلی PDF', 'تغيير ملف PDF', 'Change PDF file');
+  String get orPasteLink => _t(
+    'یان لینک یان دەقی توێژینەوەکە بنووسە',
+    'أو اكتب رابطاً أو نص البحث',
+    'Or paste a link or the text',
+  );
+  String pdfTooLarge(int mb) => _t(
+    'فایلەکە زۆر گەورەیە. زۆرترین قەبارە $mb MB ـە',
+    'الملف كبير جداً. الحد الأقصى $mb ميغابايت',
+    'The file is too large. The limit is $mb MB',
+  );
+  String get onlyPdf => _t(
+    'تەنها فایلی PDF ڕێگەپێدراوە',
+    'يُسمح بملفات PDF فقط',
+    'Only PDF files are allowed',
+  );
+  String get researchContentRequired => _t(
+    'فایلێکی PDF هەڵبژێرە یان لینک/دەق بنووسە',
+    'اختر ملف PDF أو اكتب رابطاً/نصاً',
+    'Choose a PDF or add a link/text',
+  );
+
+  String get birthDateTitle =>
+      _t('ڕێکەوتی لەدایکبوون', 'تاريخ الميلاد', 'Date of birth');
+  String get birthDateExplain => _t(
+    'ZankoSwap بۆ تەمەنی ١٣ ساڵ و سەرووترە. تکایە ڕێکەوتی لەدایکبوونت دیاری بکە. ئەم زانیارییە بە کەس پیشان نادرێت.',
+    'ZankoSwap للأعمار من 13 سنة فما فوق. يرجى تحديد تاريخ ميلادك. لا تُعرض هذه المعلومة لأي أحد.',
+    'ZankoSwap is for people aged 13 and over. Please enter your date of birth. It is never shown to anyone.',
+  );
+  String get pickBirthDate =>
+      _t('هەڵبژاردنی ڕێکەوت', 'اختر التاريخ', 'Choose date');
+  String get okLabel => _t('باشە', 'حسناً', 'OK');
+  String get continueLabel => _t('بەردەوامبوون', 'متابعة', 'Continue');
+  String get tooYoungTitle => _t('ببورە', 'عذراً', 'Sorry');
+  String get tooYoungBody => _t(
+    'دەبێت تەمەنت لانیکەم ١٣ ساڵ بێت بۆ بەکارهێنانی ZankoSwap.',
+    'يجب أن يكون عمرك 13 سنة على الأقل لاستخدام ZankoSwap.',
+    'You must be at least 13 years old to use ZankoSwap.',
+  );
 
   String institutionType(String type) {
     if (type == 'school') return schools;

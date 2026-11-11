@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/data/supabase_storage_service.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/academic_path.dart';
 import '../../../core/models/research_paper.dart';
@@ -28,6 +31,39 @@ class _AddResearchScreenState extends State<AddResearchScreen> {
   final repository = ResearchRepository();
   late AcademicPath path;
   bool saving = false;
+  String? pdfName;
+  Uint8List? pdfBytes;
+
+  Future<void> pickPdf() async {
+    final s = AppStrings.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final file = await FilePicker.pickFile(
+      type: FileType.custom,
+      allowedExtensions: const ['pdf'],
+    );
+    if (file == null) return;
+    final size = await file.length() ?? 0;
+    if (size > SupabaseStorageService.maxPdfMb * 1024 * 1024) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(s.pdfTooLarge(SupabaseStorageService.maxPdfMb))),
+      );
+      return;
+    }
+    final bytes = await file.readAsBytes();
+    final isPdf =
+        bytes.length > 5 &&
+        String.fromCharCodes(bytes.sublist(0, 5)) == '%PDF-';
+    if (!isPdf) {
+      messenger.showSnackBar(SnackBar(content: Text(s.onlyPdf)));
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        pdfName = file.name;
+        pdfBytes = bytes;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -52,6 +88,16 @@ class _AddResearchScreenState extends State<AddResearchScreen> {
     final cleanTitle = title.text.trim();
     final cleanDesc = description.text.trim();
     final cleanUrl = fileUrl.text.trim();
+
+    if (pdfBytes == null &&
+        cleanUrl.isEmpty &&
+        cleanTitle.isNotEmpty &&
+        !path.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.researchContentRequired)));
+      return;
+    }
 
     if (cleanTitle.isEmpty || path.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -80,11 +126,25 @@ class _AddResearchScreenState extends State<AddResearchScreen> {
         );
       }
 
+      final fileUrl = pdfBytes != null
+          ? await SupabaseStorageService.uploadResearchPdf(
+              ownerId: user.id,
+              bytes: pdfBytes!,
+            )
+          : cleanUrl;
+
       final payload = <String, dynamic>{
+        if (!widget.isEditing) 'authorId': user.id,
+        if (!widget.isEditing)
+          'authorName': user.userMetadata?['displayName']?.toString() ?? '',
         'title': cleanTitle,
         'description': cleanDesc,
-        'file_url': cleanUrl,
+        'file_url': fileUrl,
         'stage': path.stage,
+        'universityId': path.institutionId,
+        'universityName': path.institutionName,
+        'collegeId': path.collegeName,
+        'departmentId': path.departmentName,
       };
 
       if (widget.isEditing) {
@@ -109,7 +169,7 @@ class _AddResearchScreenState extends State<AddResearchScreen> {
     } catch (e) {
       if (mounted) {
         final errorText = e.toString().toLowerCase();
-        String message = AppStrings.of(context).genericError;
+        String message = AppStrings.of(context).errorFor(e);
         if (errorText.contains('network') || errorText.contains('socket')) {
           message = 'کێشە لە هێڵی ئینتەرنێت هەیە، دووبارە هەوڵبدەرەوە.';
         }
@@ -176,14 +236,49 @@ class _AddResearchScreenState extends State<AddResearchScreen> {
             ),
           ),
           const SizedBox(height: 14),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(54),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            onPressed: saving ? null : pickPdf,
+            icon: Icon(
+              pdfBytes == null
+                  ? Icons.upload_file_rounded
+                  : Icons.picture_as_pdf_rounded,
+              color: pdfBytes == null ? null : Colors.red.shade600,
+            ),
+            label: Text(
+              pdfBytes == null
+                  ? s.attachPdf
+                  : '$pdfName  (${(pdfBytes!.length / 1048576).toStringAsFixed(1)} MB)',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (pdfBytes != null)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: TextButton(
+                onPressed: saving
+                    ? null
+                    : () => setState(() {
+                        pdfName = null;
+                        pdfBytes = null;
+                      }),
+                child: Text(s.cancel),
+              ),
+            ),
+          const SizedBox(height: 14),
           TextField(
             controller: fileUrl,
+            enabled: pdfBytes == null,
             maxLines: 2,
             decoration: InputDecoration(
               labelText: s.contentOrLink,
-              helperText: s.isKurdish
-                  ? 'لینکی فایلی PDF یان ناوەڕۆک'
-                  : 'PDF URL or content',
+              helperText: s.orPasteLink,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
               ),

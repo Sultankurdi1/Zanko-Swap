@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -67,12 +68,33 @@ class SupabaseStorageService {
     }
   }
 
+  static const researchBucket = 'research-files';
+  static const maxPdfMb = 20;
+
+  /// Uploads a research PDF to the uploader's own folder and returns its
+  /// public URL. The bucket itself only accepts PDFs up to [maxPdfMb] MB.
+  static Future<String> uploadResearchPdf({
+    required String ownerId,
+    required Uint8List bytes,
+  }) async {
+    final path = '$ownerId/${DateTime.now().millisecondsSinceEpoch}.pdf';
+    await client.storage
+        .from(researchBucket)
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(contentType: 'application/pdf'),
+        );
+    return client.storage.from(researchBucket).getPublicUrl(path);
+  }
+
   static Future<void> deleteAllUserFiles(String userId) async {
     const buckets = [
       'listing-images',
       'profile-images',
       'service-images',
       receiptBucket,
+      researchBucket,
     ];
     for (final bucket in buckets) {
       try {

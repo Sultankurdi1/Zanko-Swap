@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../core/models/listing.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/data/auth_permissions.dart';
 import '../../../core/data/favorites_store.dart';
 import '../../../core/data/supabase_storage_service.dart';
+import '../../../core/data/digits.dart';
 import '../data/listing_repository.dart';
 import '../../chat/presentation/chat_screen.dart';
 import '../../../core/localization/app_strings.dart';
@@ -48,23 +48,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
       case 'book':
       default:
         return 'Academic Books';
-    }
-  }
-
-  Future<void> _openWhatsApp(String phone) async {
-    final cleanPhone = phone.replaceAll(RegExp(r'[^0-9+]'), '');
-    final url = 'https://wa.me/$cleanPhone';
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('ناتوانرێت پەیوەندی بە وەتسئەپەوە بکرێت'),
-          ),
-        );
-      }
     }
   }
 
@@ -468,24 +451,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      height: 48,
-                      width: 48,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF25D366).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: IconButton(
-                        onPressed: () => _openWhatsApp('9647500000000'),
-                        icon: const Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          color: Color(0xFF25D366),
-                          size: 22,
-                        ),
-                        tooltip: 'WhatsApp',
-                      ),
-                    ),
-                    const SizedBox(width: 12),
                     Expanded(
                       child: isMyListing
                           ? Container(
@@ -642,6 +607,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 TextField(
                   controller: priceController,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [Digits.onlyDigits],
                   style: TextStyle(color: palette.textPrimary),
                   decoration: InputDecoration(
                     labelText: 'نرخ (IQD) / Price',
@@ -705,7 +671,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       : () async {
                           final newTitle = titleController.text.trim();
                           final newPrice =
-                              int.tryParse(priceController.text.trim()) ??
+                              Digits.parse(priceController.text) ??
                               _currentListing.priceIQD;
                           final newDesc = descController.text.trim();
 

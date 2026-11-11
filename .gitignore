@@ -14,3 +14,7 @@ supabase/.temp/
 android/key.properties
 *.jks
 *.keystore
+
+# Raw phone screenshots can show private chats and names
+store/raw/
+__pycache__/
