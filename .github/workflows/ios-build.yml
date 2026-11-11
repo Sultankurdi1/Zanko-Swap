@@ -3,6 +3,12 @@ name: Build iOS IPA
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - "docs/**"
+      - "store/**"
+      - "tool/**"
+      - "supabase/**"
+      - "**/*.md"
   workflow_dispatch:
 
 concurrency:

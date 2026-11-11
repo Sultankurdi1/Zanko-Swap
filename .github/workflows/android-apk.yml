@@ -3,6 +3,12 @@ name: Build Android test APK
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - "docs/**"
+      - "store/**"
+      - "tool/**"
+      - "supabase/**"
+      - "**/*.md"
   workflow_dispatch:
 
 concurrency:
