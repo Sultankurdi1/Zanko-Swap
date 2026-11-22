@@ -19,6 +19,7 @@ Each file was run once, in the numbered order. To rebuild the database from scra
 | 19 | Map location required for places, research PDF storage, listing price check, 13+ age check |
 | 20 | Ad prices the admin can change from the app |
 | 21 | Privacy and abuse fixes: block/chat checks only about yourself, blocked words in research and exam papers, safe research links |
+| 22 | No write or TRUNCATE permissions at all for guests (found by `scripts/security_check.sql`) |
 
 New changes go in a new file with the next number.
 
@@ -27,6 +28,7 @@ New changes go in a new file with the next number.
 | File | When to run |
 | --- | --- |
 | `make_owner_admin.sql` | Give the owner account the admin role |
+| `security_check.sql` | Any time: read-only check of the live database; every row it returns is a problem |
 | `reset_test_data.sql` | Once, right before launch: deletes all test content and every account except the owner's. Empty the storage buckets first. |
 
 ## `functions/` — Edge Functions
