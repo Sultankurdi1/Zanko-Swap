@@ -1,4 +1,3 @@
-import 'dart:io';
 import '../core/data/removed_rows.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -211,7 +210,7 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
       if (photo != null) {
         imageUrl = await SupabaseStorageService.uploadServiceImage(
           ownerId: user.id,
-          file: File(photo!.path),
+          file: photo!,
         );
       }
       await db.from('service_updates').insert({

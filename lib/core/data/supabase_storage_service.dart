@@ -1,16 +1,24 @@
 import 'dart:typed_data';
-import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseStorageService {
   static SupabaseClient get client => Supabase.instance.client;
 
-  static Future<String> _moderatedUpload(String bucket, File file) async {
+  // Files are sent as bytes (not by path) so uploads also work on the web,
+  // where picked photos have no real file path.
+  static Future<String> _moderatedUpload(String bucket, XFile file) async {
     final response = await client.functions.invoke(
       'moderate-upload',
       queryParameters: {'bucket': bucket},
-      files: [await http.MultipartFile.fromPath('file', file.path)],
+      files: [
+        http.MultipartFile.fromBytes(
+          'file',
+          await file.readAsBytes(),
+          filename: file.name.isEmpty ? 'upload' : file.name,
+        ),
+      ],
     );
     final data = response.data;
     final url = data is Map ? data['url']?.toString() : null;
@@ -22,33 +30,33 @@ class SupabaseStorageService {
 
   static Future<String> uploadListingImage({
     required String ownerId,
-    required File file,
+    required XFile file,
     required String fileName,
   }) => _moderatedUpload('listing-images', file);
 
   static Future<String> uploadProfileImage({
     required String userId,
-    required File file,
+    required XFile file,
   }) => _moderatedUpload('profile-images', file);
 
   static Future<String> uploadServiceImage({
     required String ownerId,
-    required File file,
+    required XFile file,
   }) => _moderatedUpload('service-images', file);
 
   static const receiptBucket = 'ad-receipts';
 
   static Future<String> uploadReceipt({
     required String ownerId,
-    required File file,
+    required XFile file,
   }) async {
     final path =
         '$ownerId/receipt_${DateTime.now().millisecondsSinceEpoch}.jpg';
     await client.storage
         .from(receiptBucket)
-        .upload(
+        .uploadBinary(
           path,
-          file,
+          await file.readAsBytes(),
           fileOptions: const FileOptions(contentType: 'image/jpeg'),
         );
     return '$receiptBucket/$path';

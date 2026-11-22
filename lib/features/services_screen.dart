@@ -1,6 +1,6 @@
-import 'dart:io';
 import '../core/data/removed_rows.dart';
 import 'package:flutter/material.dart';
+import 'package:zankoswap/core/widgets/picked_image.dart';
 import 'package:flutter/services.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:image_picker/image_picker.dart';
@@ -85,7 +85,7 @@ class _ServicesScreenState extends State<ServicesScreen> {
       if (draft.image != null) {
         imageUrl = await SupabaseStorageService.uploadServiceImage(
           ownerId: user.id,
-          file: File(draft.image!.path),
+          file: draft.image!,
         );
       }
 
@@ -996,8 +996,8 @@ class _AddServiceDialogState extends State<_AddServiceDialog> {
               if (image != null) ...[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.file(
-                    File(image!.path),
+                  child: PickedImage(
+                    image!,
                     height: 100,
                     width: double.infinity,
                     fit: BoxFit.cover,

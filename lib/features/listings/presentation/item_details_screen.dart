@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -546,7 +545,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     final descController = TextEditingController(
       text: _currentListing.description,
     );
-    File? newImageFile;
+    XFile? newImageFile;
     bool isSaving = false;
 
     await showModalBottomSheet<void>(
@@ -650,7 +649,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                     );
                     if (picked != null) {
                       setModalState(() {
-                        newImageFile = File(picked.path);
+                        newImageFile = picked;
                       });
                     }
                   },

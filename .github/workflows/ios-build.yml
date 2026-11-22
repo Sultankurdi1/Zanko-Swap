@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - "docs/**"
       - "store/**"
+      - "web/**"
+      - ".github/workflows/web-deploy.yml"
       - "tool/**"
       - "supabase/**"
       - "**/*.md"

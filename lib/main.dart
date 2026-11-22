@@ -21,7 +21,9 @@ Future<void> main() async {
     } catch (_) {}
   }
 
+  // Push notifications are set up for the phone apps only, not the website.
   if (SupabaseConfig.isConfigured &&
+      !kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.android ||
           defaultTargetPlatform == TargetPlatform.iOS)) {
     try {

@@ -1,6 +1,6 @@
-import 'dart:io';
 import '../../../core/localization/app_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:zankoswap/core/widgets/picked_image.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../data/ad_repository.dart';
@@ -25,8 +25,8 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
   final targetUrl = TextEditingController();
   final receiptCode = TextEditingController();
 
-  File? _adImageFile;
-  File? _receiptImageFile;
+  XFile? _adImageFile;
+  XFile? _receiptImageFile;
 
   late String placement;
   int days = 7;
@@ -73,9 +73,9 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
     if (picked != null) {
       setState(() {
         if (isReceipt) {
-          _receiptImageFile = File(picked.path);
+          _receiptImageFile = picked;
         } else {
-          _adImageFile = File(picked.path);
+          _adImageFile = picked;
         }
       });
     }
@@ -377,7 +377,7 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
                 _adImageFile != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
+                        child: PickedImage(
                           _adImageFile!,
                           width: 60,
                           height: 60,
@@ -614,7 +614,7 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
                 _receiptImageFile != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
+                        child: PickedImage(
                           _receiptImageFile!,
                           width: 60,
                           height: 60,

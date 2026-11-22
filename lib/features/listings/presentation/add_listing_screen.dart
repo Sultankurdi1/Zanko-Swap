@@ -1,7 +1,7 @@
-import 'dart:io';
 import '../../../core/localization/app_strings.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:zankoswap/core/widgets/picked_image.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/models/academic_path.dart';
 import '../../../core/theme/app_theme.dart';
@@ -131,7 +131,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
       try {
         final url = await SupabaseStorageService.uploadListingImage(
           ownerId: ownerId,
-          file: File(photos[i].path),
+          file: photos[i],
           fileName: '${DateTime.now().millisecondsSinceEpoch}_$i.jpg',
         );
         urls.add(url);
@@ -297,8 +297,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  child: Image.file(
-                                    File(photos[i].path),
+                                  child: PickedImage(
+                                    photos[i],
                                     width: 84,
                                     height: 84,
                                     fit: BoxFit.cover,

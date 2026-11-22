@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:zankoswap/core/widgets/picked_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/localization/app_strings.dart';
@@ -98,7 +98,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
       return;
     }
-    final size = await File(r.path).length();
+    final size = await r.length();
     if (size > 2 * 1024 * 1024) {
       _msg(
         s.isKurdish
@@ -138,7 +138,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (pickedPhoto != null) {
         photoUrl = await SupabaseStorageService.uploadProfileImage(
           userId: u.id,
-          file: File(pickedPhoto!.path),
+          file: pickedPhoto!,
         );
       }
       final meta = {
@@ -235,7 +235,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   radius: 46,
                   backgroundColor: palette.surfaceHighlight,
                   backgroundImage: pickedPhoto != null
-                      ? FileImage(File(pickedPhoto!.path))
+                      ? pickedImageProvider(pickedPhoto!)
                       : ((existingPhotoUrl?.isNotEmpty ?? false)
                                 ? NetworkImage(existingPhotoUrl!)
                                 : null)

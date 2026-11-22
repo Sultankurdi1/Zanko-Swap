@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:pdfrx/pdfrx.dart';
 import '../../../core/data/document_cache_service.dart';
 import '../../../core/localization/app_strings.dart';
@@ -17,6 +19,11 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   bool downloading = false;
 
   Future<void> _download() async {
+    // The web has no app folder to save into: let the browser download it.
+    if (kIsWeb) {
+      await launchUrl(Uri.parse(widget.url), webOnlyWindowName: '_blank');
+      return;
+    }
     setState(() => downloading = true);
     try {
       final file = await DocumentCacheService.downloadToDocuments(

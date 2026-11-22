@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:zankoswap/core/widgets/picked_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/data/supabase_storage_service.dart';
@@ -69,8 +69,7 @@ class _AddExamPaperScreenState extends State<AddExamPaperScreen> {
   Future<List<String>> uploadImages(String ownerId) async {
     final urls = <String>[];
     for (var i = 0; i < images.length; i++) {
-      final file = File(images[i].path);
-      if (!await file.exists()) continue;
+      final file = images[i];
       final fileName =
           'exam_${ownerId}_${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
       final url = await SupabaseStorageService.uploadListingImage(
@@ -300,8 +299,8 @@ class _AddExamPaperScreenState extends State<AddExamPaperScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.file(
-                        File(images[index].path),
+                      child: PickedImage(
+                        images[index],
                         width: 90,
                         height: 90,
                         fit: BoxFit.cover,
