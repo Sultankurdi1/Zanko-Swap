@@ -8,8 +8,8 @@ class PlatformRules {
   static bool get paidAdsAllowed =>
       kIsWeb || defaultTargetPlatform != TargetPlatform.iOS;
 
-  /// Google sign-in is wired for the Android app only. On the web the native
-  /// flow returns no ID token, so the website uses email and password.
+  /// Google sign-in: the Android app uses the native Google flow, the website
+  /// uses Supabase's redirect flow (see SignInScreen._google).
   static bool get googleSignInAvailable =>
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+      kIsWeb || defaultTargetPlatform == TargetPlatform.android;
 }

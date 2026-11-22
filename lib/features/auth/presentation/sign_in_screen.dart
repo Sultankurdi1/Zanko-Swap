@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
@@ -164,6 +165,15 @@ class _SignInScreenState extends State<SignInScreen> {
       info = null;
     });
     try {
+      if (kIsWeb) {
+        // Website: Supabase sends the browser to Google, which returns to this
+        // site already signed in. The database trigger creates the profile.
+        await Supabase.instance.client.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: Uri.base.origin,
+        );
+        return;
+      }
       final google = GoogleSignIn(
         serverClientId: _webClientId,
         clientId: _webClientId,

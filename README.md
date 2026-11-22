@@ -45,6 +45,12 @@ an install button, iPhone users follow the Share → Add to Home Screen hint.
 - Picked photos are uploaded as bytes (`XFile`), and previews use
   `PickedImage` (`lib/core/widgets/picked_image.dart`), so uploads work on the
   web too.
-- Web-only differences: no push notifications, no Google sign-in (email and
-  password instead), PDF "download" opens the file in the browser, and paid ads
-  are shown on the website even on iPhones (it is not the App Store).
+- Google sign-in on the web uses Supabase's redirect flow
+  (`signInWithOAuth`). It needs the Google provider's Client Secret in
+  Supabase, the redirect URI
+  `https://sbjkeyhihfypoieexfga.supabase.co/auth/v1/callback` on the Google
+  web OAuth client, and the site's address in Supabase → Authentication →
+  URL Configuration → Redirect URLs.
+- Web-only differences: no push notifications, PDF "download" opens the file
+  in the browser, and paid ads are shown on the website even on iPhones (it is
+  not the App Store).
