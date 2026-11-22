@@ -85,7 +85,8 @@ Deno.serve(async (request) => {
     if (listError) throw listError;
     const hourAgo = Date.now() - 60 * 60 * 1000;
     const lastHour = (recent ?? []).filter(
-      (item) => item.created_at && Date.parse(item.created_at) > hourAgo,
+      (item: { created_at?: string | null }) =>
+        !!item.created_at && Date.parse(item.created_at) > hourAgo,
     ).length;
     if (lastHour >= MAX_UPLOADS_PER_HOUR) {
       return jsonResponse({ error: 'too_many_uploads' }, 429);
