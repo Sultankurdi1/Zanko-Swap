@@ -8,6 +8,9 @@ const corsHeaders = {
 
 const PUBLIC_BUCKETS = new Set(['listing-images', 'profile-images', 'service-images']);
 const MAX_BYTES = 10 * 1024 * 1024;
+// Each person may upload at most this many pictures per hour to one bucket,
+// so nobody can fill the storage or use up the moderation credits.
+const MAX_UPLOADS_PER_HOUR = 40;
 
 function jsonResponse(body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -72,6 +75,21 @@ Deno.serve(async (request) => {
 
     const bucket = new URL(request.url).searchParams.get('bucket') ?? '';
     if (!PUBLIC_BUCKETS.has(bucket)) return jsonResponse({ error: 'Unknown bucket.' }, 400);
+
+    const { data: recent, error: listError } = await admin.storage
+      .from(bucket)
+      .list(authData.user.id, {
+        limit: MAX_UPLOADS_PER_HOUR,
+        sortBy: { column: 'created_at', order: 'desc' },
+      });
+    if (listError) throw listError;
+    const hourAgo = Date.now() - 60 * 60 * 1000;
+    const lastHour = (recent ?? []).filter(
+      (item) => item.created_at && Date.parse(item.created_at) > hourAgo,
+    ).length;
+    if (lastHour >= MAX_UPLOADS_PER_HOUR) {
+      return jsonResponse({ error: 'too_many_uploads' }, 429);
+    }
 
     const form = await request.formData();
     const file = form.get('file');

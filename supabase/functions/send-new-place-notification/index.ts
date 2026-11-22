@@ -87,6 +87,17 @@ Deno.serve(async (request) => {
       return jsonResponse({ sent: 0, reason: 'Only one new-place announcement per day.' }, 429);
     }
 
+    // Everyone gets these, so keep the total small even if someone makes
+    // many accounts: at most 5 new-place announcements a day in the whole app.
+    const { count: allRecent, error: allRecentError } = await admin
+      .from('place_broadcasts')
+      .select('service_id', { count: 'exact', head: true })
+      .gte('sent_at', since);
+    if (allRecentError) throw allRecentError;
+    if ((allRecent ?? 0) >= 5) {
+      return jsonResponse({ sent: 0, reason: 'Daily announcement limit reached.' }, 429);
+    }
+
     const { error: claimError } = await admin
       .from('place_broadcasts')
       .insert({ service_id: String(place.id), owner_id: authData.user.id });

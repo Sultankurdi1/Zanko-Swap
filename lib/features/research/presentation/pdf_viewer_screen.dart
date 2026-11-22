@@ -21,7 +21,11 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   Future<void> _download() async {
     // The web has no app folder to save into: let the browser download it.
     if (kIsWeb) {
-      await launchUrl(Uri.parse(widget.url), webOnlyWindowName: '_blank');
+      final uri = Uri.tryParse(widget.url);
+      // Only real web links: never javascript: or other link types.
+      if (uri != null && (uri.scheme == 'https' || uri.scheme == 'http')) {
+        await launchUrl(uri, webOnlyWindowName: '_blank');
+      }
       return;
     }
     setState(() => downloading = true);

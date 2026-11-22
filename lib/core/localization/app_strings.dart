@@ -207,8 +207,14 @@ class AppStrings {
       : isArabic
       ? 'تعذر فحص الصورة الآن. يرجى المحاولة لاحقًا.'
       : 'The image cannot be checked right now. Please try again later.';
+  String get tooManyUploads => isKurdish
+      ? 'لە ماوەی یەک کاتژمێردا وێنەی زۆرت ناردووە. تکایە دواتر هەوڵ بدەرەوە.'
+      : isArabic
+      ? 'لقد رفعت صورًا كثيرة خلال ساعة. يرجى المحاولة لاحقًا.'
+      : 'You uploaded many pictures in the last hour. Please try again later.';
   String errorFor(Object error) {
     final text = error.toString();
+    if (text.contains('too_many_uploads')) return tooManyUploads;
     if (text.contains('inappropriate_content')) return inappropriateContent;
     if (text.contains('inappropriate_image')) return inappropriateImage;
     if (text.contains('moderation_unavailable')) return imageCheckUnavailable;
