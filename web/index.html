@@ -22,7 +22,10 @@
   <!-- Installable app (Add to Home Screen) on iOS and Android -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- "default": the app starts below the status bar. "black-translucent"
+       made iOS give Flutter the wrong screen height, so bottom buttons
+       could not be tapped in the Home Screen app. -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="ZankoSwap">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
@@ -32,7 +35,7 @@
   <title>ZankoSwap</title>
   <link rel="manifest" href="manifest.json">
 
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
 
   <style id="install-style">
     #zs-loading {
@@ -55,8 +58,8 @@
     @keyframes zs-slide { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
 
     #zs-install {
-      position: fixed; left: 12px; right: 12px;
-      bottom: calc(12px + env(safe-area-inset-bottom));
+      /* At the top, so it never covers the app's bottom buttons. */
+      position: fixed; left: 12px; right: 12px; top: 12px;
       max-width: 460px; margin: 0 auto; z-index: 2147483647;
       display: none; direction: rtl; text-align: right;
       background: #0C271E; color: #ECFDF5;
@@ -244,7 +247,7 @@
       if (isIOS) {
         // iPhone/iPad: Apple allows no install button, so explain the steps.
         show('دوگمەی <b style="display:inline">Share</b> ' + shareIcon +
-          ' لە خوارەوە دابگرە، پاشان <b style="display:inline">Add to Home Screen</b> هەڵبژێرە.', false);
+          ' لە خوارەوەی Safari دابگرە، پاشان <b style="display:inline">Add to Home Screen</b> هەڵبژێرە.', false);
       } else if (isAndroid) {
         // Browsers without the install event (e.g. Firefox): show the menu steps.
         setTimeout(function () {
