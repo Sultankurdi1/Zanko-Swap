@@ -183,6 +183,31 @@ $$;
 revoke all on function public.review_featured(bigint, boolean) from public, anon;
 grant execute on function public.review_featured(bigint, boolean) to authenticated;
 
+-- Payment receipts (ads and featured): at most 30 photos per person, so
+-- nobody can fill the private receipts storage.
+create or replace function public.my_receipt_file_count()
+returns integer
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select count(*)::integer from storage.objects
+  where bucket_id = 'ad-receipts'
+    and (storage.foldername(name))[1] = auth.uid()::text;
+$$;
+revoke all on function public.my_receipt_file_count() from public, anon;
+grant execute on function public.my_receipt_file_count() to authenticated;
+
+drop policy if exists "ad_receipts_insert_own" on storage.objects;
+create policy "ad_receipts_insert_own" on storage.objects
+for insert to authenticated
+with check (
+  bucket_id = 'ad-receipts'
+  and (storage.foldername(name))[1] = auth.uid()::text
+  and public.my_receipt_file_count() < 30
+);
+
 -- =====================================================================
 -- 3) Admin statistics, now with the most wanted books and featured counts.
 -- =====================================================================
