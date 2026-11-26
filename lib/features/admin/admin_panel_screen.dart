@@ -894,13 +894,72 @@ class _VerificationTab extends StatelessWidget {
         names['${r['id']}'] = '${r['displayName'] ?? ''}';
       }
     }
+    final verified = List<Map<String, dynamic>>.from(
+      await _db
+          .from('profiles')
+          .select('id, displayName')
+          .eq('is_verified', true)
+          .order('displayName'),
+    );
     if (!context.mounted) return const [];
+    if (requests.isEmpty && verified.isEmpty) return const [];
     return [
       for (final request in requests)
         _VerificationCard(
           request: request,
           name: names[request.userId] ?? '',
           onDone: reload,
+        ),
+      if (verified.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+          child: Text(
+            _t(
+              context,
+              'قوتابیانی پشتڕاستکراو (${verified.length})',
+              'الطلاب الموثّقون (${verified.length})',
+              'Verified students (${verified.length})',
+            ),
+            style: const TextStyle(fontWeight: FontWeight.w800),
+          ),
+        ),
+      for (final row in verified)
+        _Card(
+          title: '${row['displayName'] ?? ''}'.trim().isEmpty
+              ? '${row['id']}'
+              : '${row['displayName']}',
+          subtitle: _t(
+            context,
+            'نیشانەی ✓ ی هەیە',
+            'لديه علامة ✓',
+            'Has the ✓ badge',
+          ),
+          actions: [
+            TextButton.icon(
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              onPressed: () async {
+                final ok = await _confirm(
+                  context,
+                  _t(
+                    context,
+                    'نیشانەی ✓ لەم کەسە لابدرێت؟',
+                    'إزالة علامة ✓ من هذا الشخص؟',
+                    'Remove the ✓ badge from this person?',
+                  ),
+                );
+                if (!ok || !context.mounted) return;
+                await _run(context, () async {
+                  await _db.rpc(
+                    'admin_set_verified',
+                    params: {'uid': row['id'], 'verified': false},
+                  );
+                  reload();
+                });
+              },
+              icon: const Icon(Icons.remove_moderator_outlined),
+              label: Text(_t(context, 'لابردنی ✓', 'إزالة ✓', 'Remove ✓')),
+            ),
+          ],
         ),
     ];
   }
