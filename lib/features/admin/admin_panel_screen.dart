@@ -3,6 +3,7 @@ import '../../core/data/removed_rows.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/localization/app_strings.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/data/verification_repository.dart';
 
 class AdminPanelScreen extends StatelessWidget {
   const AdminPanelScreen({super.key});
@@ -15,7 +16,7 @@ class AdminPanelScreen extends StatelessWidget {
         s.isKurdish ? ku : (s.isArabic ? ar : en);
 
     return DefaultTabController(
-      length: 4,
+      length: 6,
       child: Scaffold(
         backgroundColor: palette.bg,
         appBar: AppBar(
@@ -28,6 +29,8 @@ class AdminPanelScreen extends StatelessWidget {
             unselectedLabelColor: palette.textSecondary,
             indicatorColor: palette.accent,
             tabs: [
+              Tab(text: t('ئامار', 'الإحصائيات', 'Statistics')),
+              Tab(text: t('پشتڕاستکردنەوە', 'التوثيق', 'Verification')),
               Tab(text: t('ڕاپۆرتەکان', 'البلاغات', 'Reports')),
               Tab(text: t('دامەزراوەکان', 'المؤسسات', 'Institutions')),
               Tab(text: t('شاردراوەکان', 'المخفية', 'Hidden')),
@@ -37,6 +40,8 @@ class AdminPanelScreen extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
+            _StatsTab(),
+            _VerificationTab(),
             _ReportsTab(),
             _InstitutionsTab(),
             _HiddenTab(),
@@ -633,4 +638,393 @@ class _ErrorsTab extends StatelessWidget {
       'No errors recorded.',
     ),
   );
+}
+
+class _StatsTab extends StatelessWidget {
+  const _StatsTab();
+
+  static Future<List<Widget>> _load(
+    BuildContext context,
+    VoidCallback reload,
+  ) async {
+    final data = Map<String, dynamic>.from(await _db.rpc('admin_stats') as Map);
+    if (!context.mounted) return const [];
+    String n(String key) => '${data[key] ?? 0}';
+    List<Map<String, dynamic>> list(String key) =>
+        List<Map<String, dynamic>>.from(data[key] as List? ?? const []);
+
+    Widget tile(IconData icon, String label, String value, {String? extra}) =>
+        _StatTile(icon: icon, label: label, value: value, extra: extra);
+
+    return [
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          tile(
+            Icons.people_alt_outlined,
+            _t(context, 'بەکارهێنەران', 'المستخدمون', 'Users'),
+            n('users_total'),
+            extra: _t(
+              context,
+              '+${n('users_7d')} لە ٧ ڕۆژدا',
+              '+${n('users_7d')} خلال ٧ أيام',
+              '+${n('users_7d')} in 7 days',
+            ),
+          ),
+          tile(
+            Icons.menu_book_outlined,
+            _t(context, 'کاڵای چالاک', 'إعلانات نشطة', 'Active listings'),
+            n('listings_active'),
+            extra: _t(
+              context,
+              '+${n('listings_7d')} لە ٧ ڕۆژدا',
+              '+${n('listings_7d')} خلال ٧ أيام',
+              '+${n('listings_7d')} in 7 days',
+            ),
+          ),
+          tile(
+            Icons.chat_bubble_outline,
+            _t(
+              context,
+              'نامە لە ٧ ڕۆژدا',
+              'رسائل خلال ٧ أيام',
+              'Messages (7 days)',
+            ),
+            n('messages_7d'),
+            extra: _t(
+              context,
+              '${n('chats_7d')} چاتی چالاک',
+              '${n('chats_7d')} محادثة نشطة',
+              '${n('chats_7d')} active chats',
+            ),
+          ),
+          tile(
+            Icons.visibility_outlined,
+            _t(context, 'بینینی کاڵاکان', 'مشاهدات الإعلانات', 'Listing views'),
+            n('views_total'),
+          ),
+          tile(
+            Icons.verified_outlined,
+            _t(
+              context,
+              'قوتابی پشتڕاستکراو',
+              'طلاب موثّقون',
+              'Verified students',
+            ),
+            n('verified_users'),
+            extra: _t(
+              context,
+              '${n('pending_verifications')} چاوەڕێ دەکەن',
+              '${n('pending_verifications')} قيد الانتظار',
+              '${n('pending_verifications')} waiting',
+            ),
+          ),
+          tile(
+            Icons.place_outlined,
+            _t(context, 'شوێنەکان', 'الأماكن', 'Places'),
+            n('places_total'),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      _RankCard(
+        title: _t(
+          context,
+          'چالاکترین زانکۆکان',
+          'أكثر الجامعات نشاطًا',
+          'Most active universities',
+        ),
+        rows: list('top_universities'),
+      ),
+      _RankCard(
+        title: _t(
+          context,
+          'زۆرترین بینراوی کاڵاکان',
+          'الإعلانات الأكثر مشاهدة',
+          'Most viewed listings',
+        ),
+        rows: list('top_listings'),
+      ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) => _AsyncList(
+    load: _load,
+    emptyText: _t(
+      context,
+      'هیچ ئامارێک نییە.',
+      'لا توجد إحصائيات.',
+      'No data.',
+    ),
+  );
+}
+
+class _StatTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final String? extra;
+  const _StatTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.extra,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppThemeScope.of(context);
+    final width = (MediaQuery.of(context).size.width - 32) / 2;
+    return Container(
+      width: width.clamp(140.0, 260.0),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: palette.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: palette.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: palette.accent, size: 20),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              color: palette.textPrimary,
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(color: palette.textSecondary, fontSize: 12.5),
+          ),
+          if (extra != null) ...[
+            const SizedBox(height: 4),
+            Text(extra!, style: TextStyle(color: palette.accent, fontSize: 12)),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _RankCard extends StatelessWidget {
+  final String title;
+  final List<Map<String, dynamic>> rows;
+  const _RankCard({required this.title, required this.rows});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppThemeScope.of(context);
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: palette.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: palette.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: palette.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (rows.isEmpty)
+            Text('—', style: TextStyle(color: palette.textSecondary)),
+          for (var i = 0; i < rows.length; i++)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Text(
+                    '${i + 1}.',
+                    style: TextStyle(color: palette.textSecondary),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '${rows[i]['name'] ?? ''}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: palette.textPrimary),
+                    ),
+                  ),
+                  Text(
+                    '${rows[i]['total'] ?? 0}',
+                    style: TextStyle(
+                      color: palette.accent,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VerificationTab extends StatelessWidget {
+  const _VerificationTab();
+
+  static Future<List<Widget>> _load(
+    BuildContext context,
+    VoidCallback reload,
+  ) async {
+    final repo = VerificationRepository();
+    final requests = await repo.pending();
+    final names = <String, String>{};
+    if (requests.isNotEmpty) {
+      for (final r
+          in await _db
+              .from('profiles')
+              .select('id, displayName')
+              .inFilter('id', requests.map((e) => e.userId).toSet().toList())) {
+        names['${r['id']}'] = '${r['displayName'] ?? ''}';
+      }
+    }
+    if (!context.mounted) return const [];
+    return [
+      for (final request in requests)
+        _VerificationCard(
+          request: request,
+          name: names[request.userId] ?? '',
+          onDone: reload,
+        ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) => _AsyncList(
+    load: _load,
+    emptyText: _t(
+      context,
+      'هیچ داواکارییەک چاوەڕێ ناکات.',
+      'لا توجد طلبات بانتظار المراجعة.',
+      'No requests waiting.',
+    ),
+  );
+}
+
+class _VerificationCard extends StatefulWidget {
+  final VerificationRequest request;
+  final String name;
+  final VoidCallback onDone;
+  const _VerificationCard({
+    required this.request,
+    required this.name,
+    required this.onDone,
+  });
+
+  @override
+  State<_VerificationCard> createState() => _VerificationCardState();
+}
+
+class _VerificationCardState extends State<_VerificationCard> {
+  late final Future<String> _url = VerificationRepository().photoUrl(
+    widget.request.imagePath,
+  );
+  bool _busy = false;
+
+  Future<void> _decide(bool approve) async {
+    setState(() => _busy = true);
+    await _run(context, () async {
+      await VerificationRepository().review(widget.request, approve: approve);
+      widget.onDone();
+    });
+    if (mounted) setState(() => _busy = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppThemeScope.of(context);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: palette.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: palette.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            widget.name.isEmpty ? widget.request.userId : widget.name,
+            style: TextStyle(
+              color: palette.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          Text(
+            _date(widget.request.createdAt?.toIso8601String()),
+            style: TextStyle(color: palette.textSecondary, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder<String>(
+            future: _url,
+            builder: (context, snap) {
+              if (!snap.hasData) {
+                return const SizedBox(
+                  height: 160,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              return InteractiveViewer(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(snap.data!, fit: BoxFit.contain),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+                  onPressed: _busy ? null : () => _decide(false),
+                  child: Text(_t(context, 'ڕەتکردنەوە', 'رفض', 'Reject')),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: palette.primary,
+                  ),
+                  onPressed: _busy ? null : () => _decide(true),
+                  child: Text(
+                    _t(context, 'پەسەندکردن ✓', 'قبول ✓', 'Approve ✓'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _t(
+              context,
+              'دوای بڕیاردان وێنەکە دەسڕدرێتەوە.',
+              'تُحذف الصورة بعد القرار.',
+              'The photo is deleted after the decision.',
+            ),
+            textAlign: TextAlign.center,
+            style: TextStyle(color: palette.textSecondary, fontSize: 11.5),
+          ),
+        ],
+      ),
+    );
+  }
 }

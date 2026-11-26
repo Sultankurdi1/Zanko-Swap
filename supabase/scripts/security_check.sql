@@ -41,4 +41,4 @@ union all
 -- 6) Private buckets must stay private.
 select 'Bucket should be private', id
 from storage.buckets
-where id = 'ad-receipts' and public = true;
+where id in ('ad-receipts', 'student-ids') and public = true;

@@ -1,3 +1,4 @@
+import '../../../core/widgets/verified_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,12 +27,34 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   late Listing _currentListing;
   int _activeImageIndex = 0;
   late final Future<RatingSummary> _ratingFuture;
+  late final Future<int> _viewsFuture;
 
   @override
   void initState() {
     super.initState();
     _currentListing = widget.listing;
     _ratingFuture = RatingRepository().summary(_currentListing.sellerId);
+    _viewsFuture = _countAndLoadViews();
+  }
+
+  /// Counts this visit (the seller's own visits do not count) and loads
+  /// how many times the listing was seen.
+  Future<int> _countAndLoadViews() async {
+    final db = Supabase.instance.client;
+    final id = _currentListing.id;
+    try {
+      await db.rpc('count_listing_view', params: {'listing_id': id});
+    } catch (_) {}
+    try {
+      final row = await db
+          .from('listing_stats')
+          .select('views')
+          .eq('listing_id', id)
+          .maybeSingle();
+      return (row?['views'] as num?)?.toInt() ?? 0;
+    } catch (_) {
+      return 0;
+    }
   }
 
   String _formatCategory(String type) {
@@ -313,6 +336,32 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
+                            const SizedBox(width: 14),
+                            FutureBuilder<int>(
+                              future: _viewsFuture,
+                              builder: (context, snap) {
+                                final views = snap.data ?? 0;
+                                if (views == 0) return const SizedBox.shrink();
+                                return Row(
+                                  children: [
+                                    Icon(
+                                      Icons.visibility_outlined,
+                                      size: 16,
+                                      color: palette.textSecondary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '$views',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: palette.textSecondary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -369,15 +418,23 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                   children: [
                                     Row(
                                       children: [
-                                        Text(
-                                          _currentListing.sellerName.isNotEmpty
-                                              ? _currentListing.sellerName
-                                              : 'Zanko Student',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 15,
-                                            color: palette.textPrimary,
+                                        Flexible(
+                                          child: Text(
+                                            _currentListing
+                                                    .sellerName
+                                                    .isNotEmpty
+                                                ? _currentListing.sellerName
+                                                : 'Zanko Student',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 15,
+                                              color: palette.textPrimary,
+                                            ),
                                           ),
+                                        ),
+                                        VerifiedBadge(
+                                          userId: _currentListing.sellerId,
                                         ),
                                       ],
                                     ),

@@ -1,3 +1,5 @@
+import '../../../core/widgets/verified_badge.dart';
+import 'verification_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
 import '../../../core/data/supabase_storage_service.dart';
@@ -228,18 +230,25 @@ class _ProfileBody extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        FutureBuilder<String>(
-                          future: _displayName(s),
-                          builder: (context, nameSnapshot) => Text(
-                            nameSnapshot.data ?? s.student,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 19,
-                              fontWeight: FontWeight.w900,
+                        Row(
+                          children: [
+                            Flexible(
+                              child: FutureBuilder<String>(
+                                future: _displayName(s),
+                                builder: (context, nameSnapshot) => Text(
+                                  nameSnapshot.data ?? s.student,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                            VerifiedBadge(userId: user!.id, size: 20),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -347,6 +356,27 @@ class _ProfileBody extends StatelessWidget {
                       ? 'بابەتە چالاکەکان، فرۆشراوەکان و بڵاوکردنەوەیەکی نوێ'
                       : 'Active, sold and relist your books',
                   onTap: () => Navigator.pushNamed(context, '/my-listings'),
+                ),
+                const SizedBox(height: 10),
+                _EmeraldMenuCard(
+                  palette: palette,
+                  icon: Icons.verified_rounded,
+                  title: s.isKurdish
+                      ? 'قوتابی پشتڕاستکراو'
+                      : s.isArabic
+                      ? 'طالب موثّق'
+                      : 'Verified student',
+                  subtitle: s.isKurdish
+                      ? 'بە ناسنامەی قوتابی نیشانەی ✓ وەربگرە'
+                      : s.isArabic
+                      ? 'احصل على علامة ✓ بهوية الطالب'
+                      : 'Get the ✓ badge with your student ID',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const VerificationScreen(),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 14),
                 OutlinedButton.icon(

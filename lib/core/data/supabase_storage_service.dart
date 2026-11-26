@@ -103,6 +103,7 @@ class SupabaseStorageService {
       'service-images',
       receiptBucket,
       researchBucket,
+      'student-ids',
     ];
     for (final bucket in buckets) {
       try {
