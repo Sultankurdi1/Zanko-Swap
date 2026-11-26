@@ -12,6 +12,7 @@ import '../../chat/presentation/chat_screen.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/data/rating_repository.dart';
 import '../../../core/widgets/report_content.dart';
+import '../../../core/data/shared_links.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
   final Listing listing;
@@ -241,17 +242,15 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                 alpha: 0.85,
                               ),
                               child: IconButton(
+                                tooltip: AppStrings.of(context).shareAction,
                                 icon: Icon(
                                   Icons.share_outlined,
                                   color: palette.textPrimary,
                                 ),
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('بەستەری بابەت کۆپی کرا'),
-                                    ),
-                                  );
-                                },
+                                onPressed: () => SharedLinks.shareListing(
+                                  context,
+                                  _currentListing,
+                                ),
                               ),
                             ),
                           ],

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/config/platform_rules.dart';
 import '../core/localization/app_strings.dart';
 import '../core/theme/app_theme.dart';
+import '../core/data/shared_links.dart';
 import '../core/notifications/push_notification_service.dart';
 import '../features/splash/emblem_splash_screen.dart';
 import '../features/legal/privacy_policy_screen.dart';
@@ -140,6 +141,10 @@ class _ZankoSwapAppState extends State<ZankoSwapApp> {
                         final myId =
                             Supabase.instance.client.auth.currentUser?.id;
                         _syncBadgeStreams(myId);
+                        // A shared link (?item=...) opens that listing.
+                        WidgetsBinding.instance.addPostFrameCallback(
+                          (_) => SharedLinks.openPendingListing(context),
+                        );
 
                         final pages = [
                           HomeScreen(

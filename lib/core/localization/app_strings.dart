@@ -207,6 +207,21 @@ class AppStrings {
       : isArabic
       ? 'تعذر فحص الصورة الآن. يرجى المحاولة لاحقًا.'
       : 'The image cannot be checked right now. Please try again later.';
+  String get linkCopied => isKurdish
+      ? 'لینکی کاڵاکە کۆپی کرا.'
+      : isArabic
+      ? 'تم نسخ رابط الإعلان.'
+      : 'Link copied.';
+  String get listingNotFound => isKurdish
+      ? 'ئەم کاڵایە نەدۆزرایەوە. لەوانەیە فرۆشرابێت یان سڕابێتەوە.'
+      : isArabic
+      ? 'لم يتم العثور على هذا الإعلان. ربما بيع أو حُذف.'
+      : 'This listing was not found. It may be sold or removed.';
+  String get shareAction => isKurdish
+      ? 'هاوبەشکردن'
+      : isArabic
+      ? 'مشاركة'
+      : 'Share';
   String get tooManyUploads => isKurdish
       ? 'لە ماوەی یەک کاتژمێردا وێنەی زۆرت ناردووە. تکایە دواتر هەوڵ بدەرەوە.'
       : isArabic
