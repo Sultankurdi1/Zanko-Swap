@@ -1,3 +1,4 @@
+import '../../listings/presentation/wanted_screen.dart';
 import 'dart:async';
 import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
@@ -90,6 +91,27 @@ class _HomeScreenState extends State<HomeScreen> {
     scrollController.dispose();
     super.dispose();
   }
+
+  Widget _emptyText(AppStrings s, AppPalette palette) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 24),
+    child: Text(
+      _onlyMyDepartment
+          ? _homeText(
+              s,
+              'هێشتا هیچ کتێبێک بۆ بەشەکەت نییە. «بۆ بەشەکەی من» لاببە بۆ بینینی هەموو کتێبەکان.',
+              'لا توجد كتب لقسمك بعد. ألغِ «لقسمي» لرؤية الكل.',
+              'No books for your department yet. Turn off "My department" to see all.',
+            )
+          : _homeText(
+              s,
+              'هیچ بابەتێک نەدۆزرایەوە',
+              'لم يتم العثور على شيء',
+              'No listings found',
+            ),
+      textAlign: TextAlign.center,
+      style: TextStyle(color: palette.textSecondary, fontSize: 13),
+    ),
+  );
 
   /// "For my department": set once, then toggle on and off.
   Widget _myDepartmentBar(AppStrings s, AppPalette palette) {
@@ -218,6 +240,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Listing> _filterItems(List<Listing> source) {
+    final list = _matchingItems(source);
+    // Featured listings first; otherwise keep the existing order.
+    final featured = list.where((x) => x.isFeatured).toList();
+    if (featured.isEmpty) return list;
+    return [...featured, ...list.where((x) => !x.isFeatured)];
+  }
+
+  List<Listing> _matchingItems(List<Listing> source) {
     return source.where((x) {
       final typeMatch =
           contentFilter == 'all' ||
@@ -867,27 +897,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   return SliverFillRemaining(
                     hasScrollBody: false,
                     child: Center(
-                      child: Text(
-                        _onlyMyDepartment
-                            ? _homeText(
-                                s,
-                                'هێشتا هیچ کتێبێک بۆ بەشەکەت نییە. «بۆ بەشەکەی من» لاببە بۆ بینینی هەموو کتێبەکان.',
-                                'لا توجد كتب لقسمك بعد. ألغِ «لقسمي» لرؤية الكل.',
-                                'No books for your department yet. Turn off "My department" to see all.',
-                              )
-                            : s.isKurdish
-                            ? 'هیچ بابەتێک نەدۆزرایەوە'
-                            : 'No listings found',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: palette.textSecondary,
-                          fontSize: 13,
-                        ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _emptyText(s, palette),
+                          if (search.isNotEmpty &&
+                              db.auth.currentUser != null) ...[
+                            const SizedBox(height: 12),
+                            OutlinedButton.icon(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      WantedScreen(initialTitle: search),
+                                ),
+                              ),
+                              icon: const Icon(Icons.manage_search_rounded),
+                              label: Text(
+                                _homeText(
+                                  s,
+                                  'ئاگادارم بکەرەوە کاتێک دادەنرێت',
+                                  'نبّهني عندما يُعرض',
+                                  'Tell me when it is listed',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                   );
                 }
-
                 return SliverPadding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 100),
                   sliver: SliverGrid(
@@ -1058,6 +1098,26 @@ class _EmeraldFeedCard extends StatelessWidget {
                             ),
                           ),
                   ),
+                  if (listing.isFeatured)
+                    Positioned(
+                      top: 4,
+                      left: 4,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.amber,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.star_rounded,
+                          size: 14,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
                   Positioned(
                     top: 4,
                     right: 4,

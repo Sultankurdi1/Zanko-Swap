@@ -20,6 +20,12 @@ class Listing {
       status;
   final int stage;
   final DateTime createdAt;
+
+  /// Paid "featured" listings are shown first until this time.
+  final DateTime? featuredUntil;
+  bool get isFeatured =>
+      featuredUntil != null && featuredUntil!.isAfter(DateTime.now());
+
   const Listing({
     required this.id,
     required this.sellerId,
@@ -44,6 +50,7 @@ class Listing {
     this.stageLabel = '',
     required this.status,
     required this.createdAt,
+    this.featuredUntil,
   });
   factory Listing.fromMap(Map<String, dynamic> d) {
     DateTime dt =
@@ -72,6 +79,7 @@ class Listing {
       stageLabel: '${d['stageLabel'] ?? ''}',
       status: '${d['status'] ?? 'active'}',
       createdAt: dt,
+      featuredUntil: DateTime.tryParse('${d['featured_until'] ?? ''}'),
     );
   }
 }

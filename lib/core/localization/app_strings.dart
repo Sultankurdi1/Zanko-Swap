@@ -281,6 +281,13 @@ class AppStrings {
   String errorFor(Object error) {
     final text = error.toString();
     if (text.contains('too_many_uploads')) return tooManyUploads;
+    if (text.contains('wanted_limit')) {
+      return isKurdish
+          ? 'زۆرترین ١٠ کتێب دەتوانیت زیاد بکەیت. هەندێکیان بسڕەوە.'
+          : isArabic
+          ? 'يمكنك إضافة ١٠ كتب كحد أقصى. احذف بعضها.'
+          : 'You can add at most 10 books. Remove some first.';
+    }
     if (text.contains('inappropriate_content')) return inappropriateContent;
     if (text.contains('inappropriate_image')) return inappropriateImage;
     if (text.contains('moderation_unavailable')) return imageCheckUnavailable;

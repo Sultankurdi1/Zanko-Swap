@@ -5,8 +5,12 @@ import '../../../core/data/digits.dart';
 /// Weekly ad prices per placement, stored in the ad_prices table so the admin
 /// can change them without a new app version.
 class AdPrices {
-  static const defaults = {'home': 15000, 'course': 5000};
-  static const labels = {'home': 'شاشەی سەرەکی', 'course': 'بەشی کۆرسەکان'};
+  static const defaults = {'home': 15000, 'course': 5000, 'featured': 2000};
+  static const labels = {
+    'home': 'شاشەی سەرەکی',
+    'course': 'بەشی کۆرسەکان',
+    'featured': 'کاڵای تایبەت',
+  };
 
   static SupabaseClient get _db => Supabase.instance.client;
 

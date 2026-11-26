@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/localization/app_strings.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/data/verification_repository.dart';
+import '../../core/data/supabase_storage_service.dart';
+import '../listings/data/featured_repository.dart';
 
 class AdminPanelScreen extends StatelessWidget {
   const AdminPanelScreen({super.key});
@@ -16,7 +18,7 @@ class AdminPanelScreen extends StatelessWidget {
         s.isKurdish ? ku : (s.isArabic ? ar : en);
 
     return DefaultTabController(
-      length: 6,
+      length: 7,
       child: Scaffold(
         backgroundColor: palette.bg,
         appBar: AppBar(
@@ -31,6 +33,7 @@ class AdminPanelScreen extends StatelessWidget {
             tabs: [
               Tab(text: t('ئامار', 'الإحصائيات', 'Statistics')),
               Tab(text: t('پشتڕاستکردنەوە', 'التوثيق', 'Verification')),
+              Tab(text: t('کاڵای تایبەت', 'إعلانات مميزة', 'Featured')),
               Tab(text: t('ڕاپۆرتەکان', 'البلاغات', 'Reports')),
               Tab(text: t('دامەزراوەکان', 'المؤسسات', 'Institutions')),
               Tab(text: t('شاردراوەکان', 'المخفية', 'Hidden')),
@@ -42,6 +45,7 @@ class AdminPanelScreen extends StatelessWidget {
           children: [
             _StatsTab(),
             _VerificationTab(),
+            _FeaturedTab(),
             _ReportsTab(),
             _InstitutionsTab(),
             _HiddenTab(),
@@ -725,6 +729,17 @@ class _StatsTab extends StatelessWidget {
             _t(context, 'شوێنەکان', 'الأماكن', 'Places'),
             n('places_total'),
           ),
+          tile(
+            Icons.star_outline_rounded,
+            _t(context, 'کاڵای تایبەت', 'إعلانات مميزة', 'Featured'),
+            n('featured_active'),
+            extra: _t(
+              context,
+              '${n('pending_featured')} چاوەڕێ دەکەن',
+              '${n('pending_featured')} قيد الانتظار',
+              '${n('pending_featured')} waiting',
+            ),
+          ),
         ],
       ),
       const SizedBox(height: 8),
@@ -745,6 +760,15 @@ class _StatsTab extends StatelessWidget {
           'Most viewed listings',
         ),
         rows: list('top_listings'),
+      ),
+      _RankCard(
+        title: _t(
+          context,
+          'زۆرترین کتێبی داواکراو',
+          'أكثر الكتب طلبًا',
+          'Most wanted books',
+        ),
+        rows: list('top_wanted'),
       ),
     ];
   }
@@ -1081,6 +1105,170 @@ class _VerificationCardState extends State<_VerificationCard> {
             ),
             textAlign: TextAlign.center,
             style: TextStyle(color: palette.textSecondary, fontSize: 11.5),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FeaturedTab extends StatelessWidget {
+  const _FeaturedTab();
+
+  static Future<List<Widget>> _load(
+    BuildContext context,
+    VoidCallback reload,
+  ) async {
+    final requests = await FeaturedRepository().pending();
+    final titles = <String, String>{};
+    final names = <String, String>{};
+    if (requests.isNotEmpty) {
+      for (final r
+          in await _db
+              .from('listings')
+              .select('id, title')
+              .inFilter(
+                'id',
+                requests.map((e) => e.listingId).toSet().toList(),
+              )) {
+        titles['${r['id']}'] = '${r['title'] ?? ''}';
+      }
+      for (final r
+          in await _db
+              .from('profiles')
+              .select('id, displayName')
+              .inFilter('id', requests.map((e) => e.userId).toSet().toList())) {
+        names['${r['id']}'] = '${r['displayName'] ?? ''}';
+      }
+    }
+    if (!context.mounted) return const [];
+    return [
+      for (final request in requests)
+        _FeaturedCard(
+          request: request,
+          title: titles[request.listingId] ?? request.listingId,
+          name: names[request.userId] ?? '',
+          onDone: reload,
+        ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) => _AsyncList(
+    load: _load,
+    emptyText: _t(
+      context,
+      'هیچ داواکارییەک چاوەڕێ ناکات.',
+      'لا توجد طلبات بانتظار المراجعة.',
+      'No requests waiting.',
+    ),
+  );
+}
+
+class _FeaturedCard extends StatefulWidget {
+  final FeaturedRequest request;
+  final String title;
+  final String name;
+  final VoidCallback onDone;
+  const _FeaturedCard({
+    required this.request,
+    required this.title,
+    required this.name,
+    required this.onDone,
+  });
+
+  @override
+  State<_FeaturedCard> createState() => _FeaturedCardState();
+}
+
+class _FeaturedCardState extends State<_FeaturedCard> {
+  // Only photos in our private receipts bucket are shown as images; any
+  // other text (even a web link) is shown as plain text, never loaded.
+  late final Future<String?> _receiptUrl =
+      widget.request.receipt.startsWith(
+        '${SupabaseStorageService.receiptBucket}/',
+      )
+      ? SupabaseStorageService.receiptViewUrl(widget.request.receipt)
+      : Future<String?>.value(null);
+  bool _busy = false;
+
+  Future<void> _decide(bool approve) async {
+    setState(() => _busy = true);
+    await _run(context, () async {
+      await FeaturedRepository().review(widget.request, approve: approve);
+      widget.onDone();
+    });
+    if (mounted) setState(() => _busy = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppThemeScope.of(context);
+    final r = widget.request;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: palette.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: palette.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            widget.title,
+            style: TextStyle(
+              color: palette.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          Text(
+            '${widget.name} · ${r.days} ${_t(context, 'ڕۆژ', 'يوم', 'days')} · ${r.priceIqd} IQD · ${_date(r.createdAt?.toIso8601String())}',
+            style: TextStyle(color: palette.textSecondary, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder<String?>(
+            future: _receiptUrl,
+            builder: (context, snap) {
+              final url = snap.data;
+              if (url == null) {
+                // Not a stored photo: a transaction number typed by the seller.
+                return SelectableText(
+                  '${_t(context, 'ژمارەی مامەڵە', 'رقم العملية', 'Transaction')}: ${r.receipt}',
+                  style: TextStyle(color: palette.textPrimary),
+                );
+              }
+              return InteractiveViewer(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(url, fit: BoxFit.contain),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+                  onPressed: _busy ? null : () => _decide(false),
+                  child: Text(_t(context, 'ڕەتکردنەوە', 'رفض', 'Reject')),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: palette.primary,
+                  ),
+                  onPressed: _busy ? null : () => _decide(true),
+                  child: Text(
+                    _t(context, 'چالاککردن ⭐', 'تفعيل ⭐', 'Activate ⭐'),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

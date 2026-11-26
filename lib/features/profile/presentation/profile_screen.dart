@@ -1,3 +1,4 @@
+import '../../listings/presentation/wanted_screen.dart';
 import '../../../core/widgets/verified_badge.dart';
 import 'verification_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -356,6 +357,25 @@ class _ProfileBody extends StatelessWidget {
                       ? 'بابەتە چالاکەکان، فرۆشراوەکان و بڵاوکردنەوەیەکی نوێ'
                       : 'Active, sold and relist your books',
                   onTap: () => Navigator.pushNamed(context, '/my-listings'),
+                ),
+                const SizedBox(height: 10),
+                _EmeraldMenuCard(
+                  palette: palette,
+                  icon: Icons.manage_search_rounded,
+                  title: s.isKurdish
+                      ? 'کتێبە داواکراوەکانم'
+                      : s.isArabic
+                      ? 'كتب أبحث عنها'
+                      : 'Books I want',
+                  subtitle: s.isKurdish
+                      ? 'بزانە کەی کەسێک کتێبەکەت دادەنێت'
+                      : s.isArabic
+                      ? 'اعرف متى يعرض أحد الكتاب الذي تبحث عنه'
+                      : 'See when someone lists the book you need',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const WantedScreen()),
+                  ),
                 ),
                 const SizedBox(height: 10),
                 _EmeraldMenuCard(

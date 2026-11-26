@@ -1,3 +1,5 @@
+import '../../../core/config/platform_rules.dart';
+import 'feature_listing_screen.dart';
 import '../../../core/widgets/verified_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -173,6 +175,37 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                               ),
                             ),
                             const Spacer(),
+                            if (isMyListing &&
+                                PlatformRules.paidAdsAllowed &&
+                                _currentListing.status == 'active') ...[
+                              CircleAvatar(
+                                backgroundColor: palette.surface.withValues(
+                                  alpha: 0.85,
+                                ),
+                                child: IconButton(
+                                  tooltip: s.isKurdish
+                                      ? 'کاڵای تایبەت'
+                                      : s.isArabic
+                                      ? 'إعلان مميز'
+                                      : 'Feature this listing',
+                                  icon: Icon(
+                                    _currentListing.isFeatured
+                                        ? Icons.star_rounded
+                                        : Icons.star_outline_rounded,
+                                    color: Colors.amber,
+                                  ),
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => FeatureListingScreen(
+                                        listing: _currentListing,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                            ],
                             if (canManage) ...[
                               CircleAvatar(
                                 backgroundColor: palette.surface.withValues(

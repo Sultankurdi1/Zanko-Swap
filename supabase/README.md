@@ -21,6 +21,7 @@ Each file was run once, in the numbered order. To rebuild the database from scra
 | 21 | Privacy and abuse fixes: block/chat checks only about yourself, blocked words in research and exam papers, safe research links |
 | 22 | No write or TRUNCATE permissions at all for guests (found by `scripts/security_check.sql`) |
 | 23 | Verified students (student ID photo, admin approval, photo deleted after the decision), listing views, admin statistics |
+| 24 | Wanted books (private list, max 10), paid featured listings (admin checks payment), admin stats with most wanted books |
 
 New changes go in a new file with the next number.
 
