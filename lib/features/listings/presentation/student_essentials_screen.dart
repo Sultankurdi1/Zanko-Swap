@@ -126,7 +126,11 @@ class _StudentEssentialsScreenState extends State<StudentEssentialsScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(
+                    child: Text(
+                      AppStrings.of(context).errorFor(snapshot.error!),
+                    ),
+                  );
                 }
 
                 final items = (snapshot.data ?? []).where((x) {

@@ -101,7 +101,7 @@ class MyListingsScreen extends StatelessWidget {
             if (snapshot.hasError) {
               return Center(
                 child: Text(
-                  'Error: ${snapshot.error}',
+                  AppStrings.of(context).errorFor(snapshot.error!),
                   style: const TextStyle(color: Colors.redAccent),
                 ),
               );

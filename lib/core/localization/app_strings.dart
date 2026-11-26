@@ -222,6 +222,57 @@ class AppStrings {
       : isArabic
       ? 'مشاركة'
       : 'Share';
+  String get sellerInfo => isKurdish
+      ? 'زانیاری فرۆشیار'
+      : isArabic
+      ? 'معلومات البائع'
+      : 'Seller information';
+  String get sendMessage => isKurdish
+      ? 'ناردنی نامە'
+      : isArabic
+      ? 'إرسال رسالة'
+      : 'Send message';
+  String get signInFirst => isKurdish
+      ? 'تکایە سەرەتا بچۆ ژوورەوە.'
+      : isArabic
+      ? 'يرجى تسجيل الدخول أولاً.'
+      : 'Please sign in first.';
+  String categoryName(String type) {
+    switch (type.toLowerCase()) {
+      case 'medical':
+        return isKurdish
+            ? 'کەرەستەی پزیشکی'
+            : isArabic
+            ? 'مستلزمات طبية'
+            : 'Medical equipment';
+      case 'postgraduate':
+        return isKurdish
+            ? 'کتێبی خوێندنی باڵا'
+            : isArabic
+            ? 'كتب الدراسات العليا'
+            : 'Postgraduate books';
+      case 'device':
+        return isKurdish
+            ? 'ئامێر و ئەلیکترۆنیات'
+            : isArabic
+            ? 'أجهزة وإلكترونيات'
+            : 'Electronics & devices';
+      case 'study_material':
+      case 'handout':
+        return isKurdish
+            ? 'ملزمە و کەرەستەی خوێندن'
+            : isArabic
+            ? 'ملازم ومواد دراسية'
+            : 'Study materials';
+      default:
+        return isKurdish
+            ? 'کتێبی ئەکادیمی'
+            : isArabic
+            ? 'كتب أكاديمية'
+            : 'Academic books';
+    }
+  }
+
   String get tooManyUploads => isKurdish
       ? 'لە ماوەی یەک کاتژمێردا وێنەی زۆرت ناردووە. تکایە دواتر هەوڵ بدەرەوە.'
       : isArabic

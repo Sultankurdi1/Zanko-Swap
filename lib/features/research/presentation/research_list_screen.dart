@@ -487,7 +487,7 @@ class _ErrorRetry extends StatelessWidget {
             style: FilledButton.styleFrom(backgroundColor: palette.primary),
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
+            label: Text(AppStrings.of(context).retry),
           ),
         ],
       ),

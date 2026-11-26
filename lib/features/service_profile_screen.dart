@@ -509,7 +509,7 @@ class _ServiceProfileScreenState extends State<ServiceProfileScreen> {
             future: updates,
             builder: (context, snap) {
               if (snap.hasError) {
-                return Text('Error: ${snap.error}');
+                return Text(AppStrings.of(context).errorFor(snap.error!));
               }
               if (!snap.hasData) {
                 return const Padding(

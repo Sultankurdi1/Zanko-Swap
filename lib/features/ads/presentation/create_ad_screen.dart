@@ -156,9 +156,7 @@ class _CreateAdScreenState extends State<CreateAdScreen> {
     final currentUser = Supabase.instance.client.auth.currentUser;
     if (currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please sign in before submitting an ad.'),
-        ),
+        SnackBar(content: Text(AppStrings.of(context).signInFirst)),
       );
       return;
     }

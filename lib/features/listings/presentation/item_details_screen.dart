@@ -61,23 +61,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     }
   }
 
-  String _formatCategory(String type) {
-    switch (type.toLowerCase()) {
-      case 'medical':
-        return 'Medical Equipment';
-      case 'postgraduate':
-        return 'Postgraduate Books';
-      case 'device':
-        return 'Electronics & Devices';
-      case 'study_material':
-      case 'handout':
-        return 'Study Materials';
-      case 'book':
-      default:
-        return 'Academic Books';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final s = AppStrings.of(context);
@@ -333,7 +316,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              _formatCategory(_currentListing.type),
+                              AppStrings.of(
+                                context,
+                              ).categoryName(_currentListing.type),
                               style: TextStyle(
                                 fontSize: 13,
                                 color: palette.textSecondary,
@@ -381,7 +366,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'Seller Information',
+                          AppStrings.of(context).sellerInfo,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w900,
@@ -428,7 +413,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                                     .sellerName
                                                     .isNotEmpty
                                                 ? _currentListing.sellerName
-                                                : 'Zanko Student',
+                                                : AppStrings.of(
+                                                    context,
+                                                  ).student,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w800,
@@ -444,7 +431,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      'Student • $locationText',
+                                      '${AppStrings.of(context).student} • $locationText',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: palette.textSecondary,
@@ -577,9 +564,9 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                   ),
                                 ),
                                 icon: const Icon(Icons.send_rounded, size: 18),
-                                label: const Text(
-                                  'Send Message',
-                                  style: TextStyle(
+                                label: Text(
+                                  AppStrings.of(context).sendMessage,
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w800,
                                     fontSize: 15,
                                   ),
