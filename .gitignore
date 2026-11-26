@@ -18,3 +18,10 @@ android/key.properties
 # Raw phone screenshots can show private chats and names
 store/raw/
 __pycache__/
+
+# Built apps, logs and Windows tool caches do not belong in git
+*.apk
+*.aab
+*.ipa
+debug.log
+Microsoft/
