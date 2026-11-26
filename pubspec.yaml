@@ -62,3 +62,18 @@ flutter:
     - assets/images/
     - assets/fastpay_qr.jpg
     - assets/fib_qr.jpg
+
+  # Bundled for the website: without them the browser first shows boxes
+  # instead of Kurdish/Arabic letters while it downloads a font.
+  # Noto Sans Arabic: SIL Open Font License; Roboto: Apache License 2.0.
+  fonts:
+    - family: ZankoLatin
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+    - family: ZankoArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic-Regular.ttf
+        - asset: assets/fonts/NotoSansArabic-Bold.ttf
+          weight: 700

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 enum AppThemeMode {
@@ -251,7 +252,10 @@ class ZankoTheme {
         surface: palette.surface,
         onSurface: palette.textPrimary,
       ),
-      fontFamily: 'Arial',
+      // The website uses fonts bundled in the app (shown at once); the phone
+      // apps keep using the phone's own fonts as before.
+      fontFamily: kIsWeb ? 'ZankoLatin' : 'Arial',
+      fontFamilyFallback: kIsWeb ? const ['ZankoArabic'] : null,
       appBarTheme: AppBarTheme(
         backgroundColor: palette.bg,
         elevation: 0,
