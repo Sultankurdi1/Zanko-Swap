@@ -16,6 +16,9 @@ import '../../listings/presentation/item_details_screen.dart';
 import '../../notifications/presentation/notifications_screen.dart';
 import '../../ads/presentation/admin_ads_dashboard_screen.dart';
 import '../../about/about_screen.dart';
+import '../../academic/academic_path_picker.dart';
+import '../../../core/data/my_study_path.dart';
+import '../../../core/models/academic_path.dart';
 
 class HomeScreen extends StatefulWidget {
   final ValueChanged<Locale> onLanguageChanged;
@@ -48,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String search = '';
   String contentFilter = 'all';
   String selectedUniversityId = '';
+  AcademicPath _myPath = const AcademicPath();
+  bool _onlyMyDepartment = false;
   int _adPageIndex = 0;
   bool _isSearchOpen = false;
   Key _refreshKey = UniqueKey();
@@ -58,6 +63,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _adsFuture = _fetchAds();
+    MyStudyPath.load().then((path) {
+      if (mounted && !path.isEmpty) {
+        setState(() {
+          _myPath = path;
+          _onlyMyDepartment = true;
+        });
+      }
+    });
     _adRotationTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (!mounted || _adItemCount < 2 || !_adPageController.hasClients) return;
       final nextPage = (_adPageIndex + 1) % _adItemCount;
@@ -76,6 +89,121 @@ class _HomeScreenState extends State<HomeScreen> {
     searchController.dispose();
     scrollController.dispose();
     super.dispose();
+  }
+
+  /// "For my department": set once, then toggle on and off.
+  Widget _myDepartmentBar(AppStrings s, AppPalette palette) {
+    if (_myPath.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        child: OutlinedButton.icon(
+          onPressed: _editMyPath,
+          icon: const Icon(Icons.school_outlined),
+          label: Text(
+            _homeText(
+              s,
+              'بەش و قۆناغەکەت دیاری بکە بۆ بینینی کتێبەکانی خۆت',
+              'حدّد قسمك ومرحلتك لترى كتبك',
+              'Set your department to see your books',
+            ),
+          ),
+        ),
+      );
+    }
+    final label = [
+      _myPath.departmentName,
+      _myPath.stage,
+    ].where((x) => x.trim().isNotEmpty).join(' • ');
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: FilterChip(
+              selected: _onlyMyDepartment,
+              showCheckmark: true,
+              selectedColor: palette.primary.withValues(alpha: 0.25),
+              onSelected: (v) => setState(() => _onlyMyDepartment = v),
+              label: Text(
+                '${_homeText(s, 'بۆ بەشەکەی من', 'لقسمي', 'My department')}'
+                '${label.isEmpty ? '' : ': $label'}',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: _homeText(s, 'گۆڕین', 'تغيير', 'Change'),
+            onPressed: _editMyPath,
+            icon: Icon(Icons.edit_outlined, color: palette.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _editMyPath() async {
+    var draft = _myPath;
+    final s = AppStrings.of(context);
+    final saved = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.fromLTRB(
+          16,
+          16,
+          16,
+          16 + MediaQuery.of(sheetContext).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                _homeText(
+                  s,
+                  'بەش و قۆناغەکەت',
+                  'قسمك ومرحلتك',
+                  'Your department and stage',
+                ),
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                _homeText(
+                  s,
+                  'تەنها لەسەر ئەم مۆبایلە هەڵدەگیرێت.',
+                  'يُحفظ على هذا الهاتف فقط.',
+                  'Saved on this phone only.',
+                ),
+                style: const TextStyle(fontSize: 12.5),
+              ),
+              const SizedBox(height: 12),
+              AcademicPathPicker(
+                initialValue: draft,
+                onChanged: (v) => draft = v,
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: () => Navigator.pop(sheetContext, true),
+                child: Text(s.saveChanges),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (saved != true || draft.isEmpty) return;
+    await MyStudyPath.save(draft);
+    if (mounted) {
+      setState(() {
+        _myPath = draft;
+        _onlyMyDepartment = true;
+      });
+    }
   }
 
   Future<void> _handleRefresh() async {
@@ -108,7 +236,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final universityMatch =
           selectedUniversityId.isEmpty ||
           x.universityId == selectedUniversityId;
-      return typeMatch && searchMatch && universityMatch;
+      final myDepartmentMatch =
+          !_onlyMyDepartment || MyStudyPath.matches(x, _myPath);
+      return typeMatch && searchMatch && universityMatch && myDepartmentMatch;
     }).toList();
   }
 
@@ -662,6 +792,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
+            SliverToBoxAdapter(child: _myDepartmentBar(s, palette)),
+
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
@@ -731,14 +863,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 final items = _filterItems(currentData);
 
-                if (items.isEmpty && _lastKnownListings.isEmpty) {
+                if (items.isEmpty) {
                   return SliverFillRemaining(
                     hasScrollBody: false,
                     child: Center(
                       child: Text(
-                        s.isKurdish
+                        _onlyMyDepartment
+                            ? _homeText(
+                                s,
+                                'هێشتا هیچ کتێبێک بۆ بەشەکەت نییە. «بۆ بەشەکەی من» لاببە بۆ بینینی هەموو کتێبەکان.',
+                                'لا توجد كتب لقسمك بعد. ألغِ «لقسمي» لرؤية الكل.',
+                                'No books for your department yet. Turn off "My department" to see all.',
+                              )
+                            : s.isKurdish
                             ? 'هیچ بابەتێک نەدۆزرایەوە'
                             : 'No listings found',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           color: palette.textSecondary,
                           fontSize: 13,
