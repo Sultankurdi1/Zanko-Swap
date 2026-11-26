@@ -1,3 +1,4 @@
+import 'package:zankoswap/core/data/search_text.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/data/removed_rows.dart';
 import '../../../core/models/exam_paper.dart';
@@ -58,9 +59,9 @@ class ExamRepository {
             ? rows
             : rows
                   .where(
-                    (row) => '${row['subject'] ?? ''}'.toLowerCase().contains(
-                      subject.trim().toLowerCase(),
-                    ),
+                    (row) => SearchText.matches(subject, [
+                      '${row['subject'] ?? ''}',
+                    ]),
                   )
                   .toList();
         return filtered.map(ExamPaper.fromMap).toList();

@@ -1,4 +1,5 @@
 import '../core/data/removed_rows.dart';
+import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
 import 'package:zankoswap/core/widgets/picked_image.dart';
 import 'package:flutter/services.dart';
@@ -402,17 +403,11 @@ class _ServicesScreenState extends State<ServicesScreen> {
                       if (!typeMatch) return false;
                       if (query.isEmpty) return true;
 
-                      final name = (row['name'] ?? '').toString().toLowerCase();
-                      final address = (row['address'] ?? '')
-                          .toString()
-                          .toLowerCase();
-                      final offer = (row['offer'] ?? '')
-                          .toString()
-                          .toLowerCase();
-
-                      return name.contains(query) ||
-                          address.contains(query) ||
-                          offer.contains(query);
+                      return SearchText.matches(query, [
+                        row['name']?.toString(),
+                        row['address']?.toString(),
+                        row['offer']?.toString(),
+                      ]);
                     })
                     .toList();
 

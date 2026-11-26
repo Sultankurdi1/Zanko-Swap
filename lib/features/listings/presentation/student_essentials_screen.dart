@@ -1,3 +1,4 @@
+import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/listing.dart';
@@ -130,10 +131,10 @@ class _StudentEssentialsScreenState extends State<StudentEssentialsScreen> {
 
                 final items = (snapshot.data ?? []).where((x) {
                   final isDevice = x.type == 'device';
-                  final matchesSearch =
-                      search.isEmpty ||
-                      x.title.toLowerCase().contains(search) ||
-                      x.description.toLowerCase().contains(search);
+                  final matchesSearch = SearchText.matches(search, [
+                    x.title,
+                    x.description,
+                  ]);
                   return isDevice && matchesSearch;
                 }).toList();
 

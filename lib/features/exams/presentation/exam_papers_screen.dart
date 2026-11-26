@@ -1,3 +1,4 @@
+import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/data/auth_permissions.dart';
@@ -279,12 +280,13 @@ class _ExamList extends StatelessWidget {
     if (year.isNotEmpty) {
       queryBuilder = queryBuilder.eq('year', year);
     }
-    if (subject.isNotEmpty) {
-      queryBuilder = queryBuilder.ilike('subject', '%$subject%');
-    }
-
     final rows = await queryBuilder.order('createdAt', ascending: false);
-    return (rows as List).map((map) => ExamPaper.fromMap(map)).toList();
+    return (rows as List)
+        .where(
+          (map) => SearchText.matches(subject, ['${map['subject'] ?? ''}']),
+        )
+        .map((map) => ExamPaper.fromMap(map))
+        .toList();
   }
 
   Future<void> _deleteExam(BuildContext context, ExamPaper exam) async {

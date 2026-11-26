@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/config/platform_rules.dart';
@@ -99,11 +100,11 @@ class _HomeScreenState extends State<HomeScreen> {
               (x.type == 'book' || x.type == 'study_material')) ||
           (contentFilter == 'handout' && x.type == 'handout');
 
-      final searchMatch =
-          search.isEmpty ||
-          x.title.toLowerCase().contains(search) ||
-          x.description.toLowerCase().contains(search) ||
-          x.universityName.toLowerCase().contains(search);
+      final searchMatch = SearchText.matches(search, [
+        x.title,
+        x.description,
+        x.universityName,
+      ]);
       final universityMatch =
           selectedUniversityId.isEmpty ||
           x.universityId == selectedUniversityId;

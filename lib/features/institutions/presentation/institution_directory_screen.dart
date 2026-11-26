@@ -1,3 +1,4 @@
+import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
 import '../../../core/data/external_links.dart';
 import '../../../core/data/institution_repository.dart';
@@ -146,11 +147,11 @@ class _InstitutionDirectoryScreenState extends State<InstitutionDirectoryScreen>
                     }
                     final items = (snap.data ?? [])
                         .where(
-                          (x) =>
-                              query.isEmpty ||
-                              x.name(true).toLowerCase().contains(query) ||
-                              x.name(false).toLowerCase().contains(query) ||
-                              x.city.toLowerCase().contains(query),
+                          (x) => SearchText.matches(query, [
+                            x.name(true),
+                            x.name(false),
+                            x.city,
+                          ]),
                         )
                         .toList();
                     if (items.isEmpty) {

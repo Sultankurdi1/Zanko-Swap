@@ -1,3 +1,4 @@
+import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/data/auth_permissions.dart';
@@ -207,10 +208,12 @@ class _ResearchListScreenState extends State<ResearchListScreen> {
                   r,
                 ) {
                   if (query.isEmpty) return true;
-                  final text =
-                      '${r.title} ${r.description} ${r.authorName} ${r.path.summary}'
-                          .toLowerCase();
-                  return text.contains(query);
+                  return SearchText.matches(query, [
+                    r.title,
+                    r.description,
+                    r.authorName,
+                    r.path.summary,
+                  ]);
                 }).toList();
                 if (items.isEmpty) {
                   return Center(
