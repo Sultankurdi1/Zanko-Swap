@@ -28,6 +28,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   int _activeImageIndex = 0;
   late final Future<RatingSummary> _ratingFuture;
   late final Future<int> _viewsFuture;
+  static final Set<String> _countedThisSession = {};
 
   @override
   void initState() {
@@ -42,9 +43,12 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   Future<int> _countAndLoadViews() async {
     final db = Supabase.instance.client;
     final id = _currentListing.id;
-    try {
-      await db.rpc('count_listing_view', params: {'listing_id': id});
-    } catch (_) {}
+    // One view per listing per app session, however often it is reopened.
+    if (_countedThisSession.add(id)) {
+      try {
+        await db.rpc('count_listing_view', params: {'listing_id': id});
+      } catch (_) {}
+    }
     try {
       final row = await db
           .from('listing_stats')

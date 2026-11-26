@@ -38,10 +38,11 @@ class VerificationRepository {
   static const bucket = 'student-ids';
   static final Map<String, bool> _cache = {};
 
-  /// Whether a user has the verified badge (cached for this session).
-  Future<bool> isVerified(String userId) async {
+  /// Whether a user has the verified badge (cached for this session;
+  /// [fresh] asks the server again, e.g. on the verification screen).
+  Future<bool> isVerified(String userId, {bool fresh = false}) async {
     if (userId.isEmpty) return false;
-    final cached = _cache[userId];
+    final cached = fresh ? null : _cache[userId];
     if (cached != null) return cached;
     try {
       final value = await db.rpc('is_user_verified', params: {'uid': userId});

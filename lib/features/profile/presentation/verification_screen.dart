@@ -31,7 +31,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   Future<(bool, VerificationRequest?)> _load() async {
     final me = Supabase.instance.client.auth.currentUser?.id ?? '';
-    final verified = await _repo.isVerified(me);
+    final verified = await _repo.isVerified(me, fresh: true);
     final request = await _repo.myLatestRequest();
     return (verified, request);
   }

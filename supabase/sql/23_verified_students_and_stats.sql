@@ -95,10 +95,29 @@ set public = false,
     file_size_limit = excluded.file_size_limit,
     allowed_mime_types = excluded.allowed_mime_types;
 
+-- At most 3 photos at a time per person, so nobody can fill the storage.
+create or replace function public.my_student_id_file_count()
+returns integer
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select count(*)::integer from storage.objects
+  where bucket_id = 'student-ids'
+    and (storage.foldername(name))[1] = auth.uid()::text;
+$$;
+revoke all on function public.my_student_id_file_count() from public, anon;
+grant execute on function public.my_student_id_file_count() to authenticated;
+
 drop policy if exists "student_ids_insert_own" on storage.objects;
 create policy "student_ids_insert_own" on storage.objects
 for insert to authenticated
-with check (bucket_id = 'student-ids' and (storage.foldername(name))[1] = auth.uid()::text);
+with check (
+  bucket_id = 'student-ids'
+  and (storage.foldername(name))[1] = auth.uid()::text
+  and public.my_student_id_file_count() < 3
+);
 
 drop policy if exists "student_ids_read_own_or_admin" on storage.objects;
 create policy "student_ids_read_own_or_admin" on storage.objects
@@ -261,5 +280,20 @@ end;
 $$;
 revoke all on function public.admin_stats() from public, anon;
 grant execute on function public.admin_stats() to authenticated;
+
+-- =====================================================================
+-- 5) Correction to file 21: the blocked-words list contains medical words
+--    (e.g. "sexual", "anal"), so real medical research titles were refused.
+--    Research and exam papers now check only the author name.
+-- =====================================================================
+drop trigger if exists enforce_clean_text on public.research;
+create trigger enforce_clean_text
+before insert or update on public.research
+for each row execute function public.enforce_clean_text('authorName');
+
+drop trigger if exists enforce_clean_text on public.exam_papers;
+create trigger enforce_clean_text
+before insert or update on public.exam_papers
+for each row execute function public.enforce_clean_text('authorName');
 
 select 'done' as result;
