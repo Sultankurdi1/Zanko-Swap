@@ -2,12 +2,14 @@ import '../../listings/presentation/wanted_screen.dart';
 import 'dart:async';
 import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/config/platform_rules.dart';
 import '../../admin/admin_panel_screen.dart';
 import '../../../core/data/auth_permissions.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/verified_badge.dart';
 import '../../../core/models/listing.dart';
 import '../../../core/data/favorites_store.dart';
 import '../../../core/data/external_links.dart';
@@ -1156,15 +1158,26 @@ class _EmeraldFeedCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    listing.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 10.5,
-                      color: palette.textPrimary,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          listing.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 10.5,
+                            color: palette.textPrimary,
+                          ),
+                        ),
+                      ),
+                      VerifiedBadge(
+                        key: ValueKey(listing.sellerId),
+                        userId: listing.sellerId,
+                        size: 12,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Text(

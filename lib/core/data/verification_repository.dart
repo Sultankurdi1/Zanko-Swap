@@ -37,13 +37,22 @@ class VerificationRepository {
 
   static const bucket = 'student-ids';
   static final Map<String, bool> _cache = {};
+  static final Map<String, Future<bool>> _inFlight = {};
 
   /// Whether a user has the verified badge (cached for this session;
   /// [fresh] asks the server again, e.g. on the verification screen).
-  Future<bool> isVerified(String userId, {bool fresh = false}) async {
-    if (userId.isEmpty) return false;
+  /// Many cards of the same seller share one request.
+  Future<bool> isVerified(String userId, {bool fresh = false}) {
+    if (userId.isEmpty) return Future.value(false);
     final cached = fresh ? null : _cache[userId];
-    if (cached != null) return cached;
+    if (cached != null) return Future.value(cached);
+    if (!fresh && _inFlight[userId] != null) return _inFlight[userId]!;
+    final future = _fetchVerified(userId);
+    _inFlight[userId] = future;
+    return future.whenComplete(() => _inFlight.remove(userId));
+  }
+
+  Future<bool> _fetchVerified(String userId) async {
     try {
       final value = await db.rpc('is_user_verified', params: {'uid': userId});
       return _cache[userId] = value == true;

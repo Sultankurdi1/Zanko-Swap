@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/widgets/rate_seller_dialog.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/verified_badge.dart';
 
 class ChatScreen extends StatefulWidget {
   final dynamic listingId;
@@ -546,6 +547,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+            if (widget.otherUserId.isNotEmpty)
+              VerifiedBadge(userId: widget.otherUserId),
           ],
         ),
         actions: [
