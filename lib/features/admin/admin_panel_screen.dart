@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../core/data/removed_rows.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../core/data/removed_rows.dart';
+import '../../core/data/supabase_storage_service.dart';
+import '../../core/data/verification_repository.dart';
 import '../../core/localization/app_strings.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/data/verification_repository.dart';
-import '../../core/data/supabase_storage_service.dart';
 import '../listings/data/featured_repository.dart';
 
 class AdminPanelScreen extends StatelessWidget {
@@ -1232,7 +1233,6 @@ class _FeaturedCardState extends State<_FeaturedCard> {
             builder: (context, snap) {
               final url = snap.data;
               if (url == null) {
-                // Not a stored photo: a transaction number typed by the seller.
                 return SelectableText(
                   '${_t(context, 'ژمارەی مامەڵە', 'رقم العملية', 'Transaction')}: ${r.receipt}',
                   style: TextStyle(color: palette.textPrimary),

@@ -43,7 +43,6 @@ class AdPrices {
     ]);
   }
 
-  /// Admin dialog to change the weekly prices.
   static Future<void> showEditor(BuildContext context) async {
     final current = await load();
     if (!context.mounted) return;

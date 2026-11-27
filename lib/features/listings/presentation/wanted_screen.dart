@@ -9,12 +9,9 @@ import '../../../core/theme/app_theme.dart';
 import '../data/listing_repository.dart';
 import 'item_details_screen.dart';
 
-/// "I'm looking for this book": a private list of wanted books (max 10).
-/// For each one the app shows matching listings and marks new ones.
 class WantedScreen extends StatefulWidget {
   const WantedScreen({super.key, this.initialTitle});
 
-  /// Pre-filled title, e.g. from a search that found nothing.
   final String? initialTitle;
 
   @override

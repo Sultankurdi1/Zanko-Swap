@@ -1,8 +1,9 @@
-import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../core/data/auth_permissions.dart';
 import '../../../core/data/favorites_store.dart';
+import '../../../core/data/search_text.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/exam_paper.dart';
 import '../../../core/theme/app_theme.dart';

@@ -30,8 +30,6 @@ class MyStudyPath {
     await prefs.setString(_key, jsonEncode(path.toMap()));
   }
 
-  /// True when a listing belongs to the student's university and department
-  /// (and stage, when both have one).
   static bool matches(Listing x, AcademicPath path) {
     if (path.isEmpty) return true;
     bool same(String a, String b) =>

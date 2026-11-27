@@ -1,7 +1,8 @@
-import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
+
 import '../../../core/data/external_links.dart';
 import '../../../core/data/institution_repository.dart';
+import '../../../core/data/search_text.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/institution.dart';
 import '../../../core/theme/app_theme.dart';

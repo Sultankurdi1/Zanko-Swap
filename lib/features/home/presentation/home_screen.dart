@@ -1,27 +1,28 @@
-import '../../listings/presentation/wanted_screen.dart';
 import 'dart:async';
-import 'package:zankoswap/core/data/search_text.dart';
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../core/config/platform_rules.dart';
-import '../../admin/admin_panel_screen.dart';
 import '../../../core/data/auth_permissions.dart';
+import '../../../core/data/external_links.dart';
+import '../../../core/data/favorites_store.dart';
+import '../../../core/data/kurdistan_institutions.dart';
+import '../../../core/data/my_study_path.dart';
+import '../../../core/data/search_text.dart';
 import '../../../core/localization/app_strings.dart';
+import '../../../core/models/academic_path.dart';
+import '../../../core/models/listing.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/verified_badge.dart';
-import '../../../core/models/listing.dart';
-import '../../../core/data/favorites_store.dart';
-import '../../../core/data/external_links.dart';
-import '../../../core/data/kurdistan_institutions.dart';
-import '../../listings/data/listing_repository.dart';
-import '../../listings/presentation/item_details_screen.dart';
-import '../../notifications/presentation/notifications_screen.dart';
-import '../../ads/presentation/admin_ads_dashboard_screen.dart';
 import '../../about/about_screen.dart';
 import '../../academic/academic_path_picker.dart';
-import '../../../core/data/my_study_path.dart';
-import '../../../core/models/academic_path.dart';
+import '../../admin/admin_panel_screen.dart';
+import '../../ads/presentation/admin_ads_dashboard_screen.dart';
+import '../../listings/data/listing_repository.dart';
+import '../../listings/presentation/item_details_screen.dart';
+import '../../listings/presentation/wanted_screen.dart';
+import '../../notifications/presentation/notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final ValueChanged<Locale> onLanguageChanged;
@@ -115,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
 
-  /// "For my department": set once, then toggle on and off.
   Widget _myDepartmentBar(AppStrings s, AppPalette palette) {
     if (_myPath.isEmpty) {
       return Padding(
@@ -243,7 +243,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Listing> _filterItems(List<Listing> source) {
     final list = _matchingItems(source);
-    // Featured listings first; otherwise keep the existing order.
     final featured = list.where((x) => x.isFeatured).toList();
     if (featured.isEmpty) return list;
     return [...featured, ...list.where((x) => !x.isFeatured)];

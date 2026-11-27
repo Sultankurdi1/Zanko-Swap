@@ -1,21 +1,22 @@
-import '../../../core/config/platform_rules.dart';
-import 'feature_listing_screen.dart';
-import '../../../core/widgets/verified_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../core/config/platform_rules.dart';
+import '../../../core/data/auth_permissions.dart';
+import '../../../core/data/digits.dart';
+import '../../../core/data/favorites_store.dart';
+import '../../../core/data/rating_repository.dart';
+import '../../../core/data/shared_links.dart';
+import '../../../core/data/supabase_storage_service.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../../core/models/listing.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/data/auth_permissions.dart';
-import '../../../core/data/favorites_store.dart';
-import '../../../core/data/supabase_storage_service.dart';
-import '../../../core/data/digits.dart';
-import '../data/listing_repository.dart';
-import '../../chat/presentation/chat_screen.dart';
-import '../../../core/localization/app_strings.dart';
-import '../../../core/data/rating_repository.dart';
 import '../../../core/widgets/report_content.dart';
-import '../../../core/data/shared_links.dart';
+import '../../../core/widgets/verified_badge.dart';
+import '../../chat/presentation/chat_screen.dart';
+import '../data/listing_repository.dart';
+import 'feature_listing_screen.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
   final Listing listing;
@@ -40,8 +41,6 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     _viewsFuture = _countAndLoadViews();
   }
 
-  /// Counts this visit (the seller's own visits do not count) and loads
-  /// how many times the listing was seen.
   Future<int> _countAndLoadViews() async {
     final db = Supabase.instance.client;
     final id = _currentListing.id;

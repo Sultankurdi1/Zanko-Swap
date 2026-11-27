@@ -1,14 +1,15 @@
-import '../../listings/presentation/wanted_screen.dart';
-import '../../../core/widgets/verified_badge.dart';
-import 'verification_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../core/data/supabase_storage_service.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/notifications/push_notification_service.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/verified_badge.dart';
 import '../../auth/presentation/sign_in_screen.dart';
+import '../../listings/presentation/wanted_screen.dart';
 import 'edit_profile_screen.dart';
+import 'verification_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final VoidCallback onOpenSettings;

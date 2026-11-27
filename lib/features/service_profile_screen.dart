@@ -1,13 +1,14 @@
-import '../core/data/removed_rows.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../core/data/auth_permissions.dart';
 import '../core/data/external_links.dart';
+import '../core/data/removed_rows.dart';
 import '../core/data/supabase_storage_service.dart';
 import '../core/localization/app_strings.dart';
-import '../core/widgets/report_content.dart';
 import '../core/theme/app_theme.dart';
+import '../core/widgets/report_content.dart';
 
 class ServiceProfileScreen extends StatefulWidget {
   final Map<String, dynamic> service;

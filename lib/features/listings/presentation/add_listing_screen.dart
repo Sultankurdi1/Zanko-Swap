@@ -1,13 +1,14 @@
-import '../../../core/localization/app_strings.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:zankoswap/core/widgets/picked_image.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../core/data/digits.dart';
+import '../../../core/data/supabase_storage_service.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../../core/models/academic_path.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/data/supabase_storage_service.dart';
-import '../../../core/data/digits.dart';
-import 'package:flutter/services.dart';
+import '../../../core/widgets/picked_image.dart';
 import '../../academic/academic_path_picker.dart';
 import '../../auth/presentation/sign_in_screen.dart';
 import '../data/listing_repository.dart';

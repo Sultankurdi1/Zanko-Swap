@@ -7,9 +7,6 @@ import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/picked_image.dart';
 
-/// Where a student asks for the "verified student" badge by sending a
-/// photo of their student ID. The admin checks it; the photo is deleted
-/// right after the decision.
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({super.key});
 

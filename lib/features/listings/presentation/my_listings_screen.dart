@@ -1,9 +1,10 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../core/localization/app_strings.dart';
+import '../../../core/models/listing.dart';
 import '../../../core/theme/app_theme.dart';
 import '../data/listing_repository.dart';
-import '../../../core/models/listing.dart';
 import 'item_details_screen.dart';
 
 class MyListingsScreen extends StatelessWidget {

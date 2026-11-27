@@ -23,7 +23,6 @@ class SearchText {
   );
   static final _spaces = RegExp(r'\s+');
 
-  /// Lower-cased text with Kurdish/Arabic letter variants and digits unified.
   static String normalize(String input) {
     final cleaned = Digits.toWestern(
       input.toLowerCase(),

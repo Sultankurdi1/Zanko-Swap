@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/data/favorites_store.dart';
 import '../../../core/localization/app_strings.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/models/exam_paper.dart';
 import '../../../core/models/listing.dart';
 import '../../../core/models/research_paper.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../exams/data/exam_repository.dart';
 import '../../exams/presentation/exam_gallery_screen.dart';
-import '../../listings/presentation/item_details_screen.dart';
 import '../../listings/data/listing_repository.dart';
+import '../../listings/presentation/item_details_screen.dart';
 import '../../research/data/research_repository.dart';
 import '../../research/presentation/pdf_viewer_screen.dart';
 

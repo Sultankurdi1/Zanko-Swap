@@ -1,6 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// A request to show a listing first on the home screen (paid).
 class FeaturedRequest {
   final int id;
   final String userId;
@@ -39,7 +38,6 @@ class FeaturedRepository {
     : db = client ?? Supabase.instance.client;
   final SupabaseClient db;
 
-  /// The newest request for one of my listings, or null.
   Future<FeaturedRequest?> latestFor(String listingId) async {
     final row = await db
         .from('featured_requests')
@@ -65,8 +63,6 @@ class FeaturedRepository {
 
   Future<void> cancel(FeaturedRequest request) =>
       db.from('featured_requests').delete().eq('id', request.id);
-
-  // ---- Admin ----
 
   Future<List<FeaturedRequest>> pending() async {
     final rows = await db

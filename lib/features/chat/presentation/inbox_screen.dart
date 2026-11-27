@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/chat.dart';
+
 import '../../../core/localization/app_strings.dart';
+import '../../../core/models/chat.dart';
 import '../../../core/theme/app_theme.dart';
 import '../data/chat_repository.dart';
 import 'chat_screen.dart';

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../data/verification_repository.dart';
 import '../localization/app_strings.dart';
 
-/// Small blue check shown next to the name of a verified student.
-/// Shows nothing while loading or when the user is not verified.
 class VerifiedBadge extends StatefulWidget {
   const VerifiedBadge({super.key, required this.userId, this.size = 18});
 

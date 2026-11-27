@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:zankoswap/core/widgets/picked_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../core/localization/app_strings.dart';
+
 import '../../../core/data/supabase_storage_service.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/picked_image.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});

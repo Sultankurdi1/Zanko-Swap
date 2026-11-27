@@ -1,18 +1,19 @@
-import '../core/data/removed_rows.dart';
-import 'package:zankoswap/core/data/search_text.dart';
 import 'package:flutter/material.dart';
-import 'package:zankoswap/core/widgets/picked_image.dart';
 import 'package:flutter/services.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../core/data/auth_permissions.dart';
 import '../core/data/digits.dart';
-import '../core/widgets/location_picker_screen.dart';
 import '../core/data/external_links.dart';
+import '../core/data/removed_rows.dart';
+import '../core/data/search_text.dart';
 import '../core/data/supabase_storage_service.dart';
 import '../core/localization/app_strings.dart';
 import '../core/theme/app_theme.dart';
+import '../core/widgets/location_picker_screen.dart';
+import '../core/widgets/picked_image.dart';
 import 'service_profile_screen.dart';
 
 class ServicesScreen extends StatefulWidget {

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// One verification request (student ID photo checked by the admin).
 class VerificationRequest {
   final int id;
   final String userId;
@@ -29,7 +28,6 @@ class VerificationRequest {
       );
 }
 
-/// Verified students: request, check, and (for the admin) review.
 class VerificationRepository {
   VerificationRepository({SupabaseClient? client})
     : db = client ?? Supabase.instance.client;
@@ -39,9 +37,7 @@ class VerificationRepository {
   static final Map<String, bool> _cache = {};
   static final Map<String, Future<bool>> _inFlight = {};
 
-  /// Whether a user has the verified badge (cached for this session;
-  /// [fresh] asks the server again, e.g. on the verification screen).
-  /// Many cards of the same seller share one request.
+  /// Cached per session; cards of the same seller share one request.
   Future<bool> isVerified(String userId, {bool fresh = false}) {
     if (userId.isEmpty) return Future.value(false);
     final cached = fresh ? null : _cache[userId];
@@ -61,7 +57,6 @@ class VerificationRepository {
     }
   }
 
-  /// The signed-in user's newest request, or null if they never asked.
   Future<VerificationRequest?> myLatestRequest() async {
     final me = db.auth.currentUser?.id;
     if (me == null) return null;
@@ -75,7 +70,6 @@ class VerificationRepository {
     return row == null ? null : VerificationRequest.fromMap(row);
   }
 
-  /// Uploads the student ID photo privately and creates a pending request.
   Future<void> submit(XFile photo) async {
     final me = db.auth.currentUser?.id;
     if (me == null) throw StateError('not signed in');
@@ -101,15 +95,12 @@ class VerificationRepository {
     }
   }
 
-  /// Withdraws a pending request and deletes its photo.
   Future<void> cancel(VerificationRequest request) async {
     if (request.imagePath.isNotEmpty) {
       await db.storage.from(bucket).remove([request.imagePath]);
     }
     await db.from('verification_requests').delete().eq('id', request.id);
   }
-
-  // ---- Admin ----
 
   Future<List<VerificationRequest>> pending() async {
     final rows = await db
@@ -120,11 +111,10 @@ class VerificationRepository {
     return rows.map(VerificationRequest.fromMap).toList();
   }
 
-  /// A link to the private photo that works for 10 minutes.
   Future<String> photoUrl(String path) =>
       db.storage.from(bucket).createSignedUrl(path, 600);
 
-  /// Approves or rejects, then deletes the student ID photo for privacy.
+  /// The student ID photo is deleted right after the decision.
   Future<void> review(
     VerificationRequest request, {
     required bool approve,

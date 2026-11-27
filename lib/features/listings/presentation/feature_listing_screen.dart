@@ -11,8 +11,6 @@ import '../../../core/widgets/picked_image.dart';
 import '../../ads/data/ad_prices.dart';
 import '../data/featured_repository.dart';
 
-/// Seller pays a small amount so their listing is shown first (with a ⭐)
-/// on the home screen. The admin checks the payment and turns it on.
 class FeatureListingScreen extends StatefulWidget {
   const FeatureListingScreen({super.key, required this.listing});
   final Listing listing;

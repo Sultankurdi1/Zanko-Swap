@@ -1,10 +1,12 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../core/localization/app_strings.dart';
-import '../../../core/widgets/rate_seller_dialog.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/rate_seller_dialog.dart';
 import '../../../core/widgets/verified_badge.dart';
 
 class ChatScreen extends StatefulWidget {
